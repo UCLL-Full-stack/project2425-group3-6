@@ -26,6 +26,13 @@
     font-style: normal;
   }
 
+  .modal {
+    position: absolute; /* Absolute positioning for proper centering */
+    top: 50%;          /* Move the modal down to the center */
+    left: 50%;         /* Move the modal to the center */
+    transform: translate(-50%, -50%); /* Translate to truly center it */
+}
+
   
   
 }

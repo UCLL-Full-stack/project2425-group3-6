@@ -1,17 +1,4 @@
-export type Course = {
-  id: number;
-  name: string;
-  description: string;
-  phase: number;
-  credits: number;
-};
 
-export type Lecturer = {
-  id: number;
-  user: User;
-  expertise: string;
-  courses: Course[];
-};
 
 export type User = {
   firstName?: string;
@@ -22,3 +9,11 @@ export type User = {
   password?: string;
   role?: string;
 };
+
+export type Recipe = {
+  id?: number|undefined;
+  title : string;
+  description : string;
+  instructions: string;
+  portion_amount : number;
+}

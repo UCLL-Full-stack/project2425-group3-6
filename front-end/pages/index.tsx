@@ -13,7 +13,7 @@ const Home: React.FC = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
         <main>
-          <style>
+          <style suppressHydrationWarning>
             @import url("https://use.typekit.net/qtm2dsn.css");
           </style>
           <div className='bg-gradient-to-br from-[#2b8f0a] to-[#8cb57f] h-[100vh] relative'>
