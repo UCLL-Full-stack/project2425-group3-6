@@ -25,7 +25,111 @@
  *            portion_amount:
  *              type: number
  *              description: Amount of portions the recipe serves.
+ *            owner:
+ *              $ref: '#/components/schemas/User'
+ *            ingredients:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/Ingredient'
+ *          required:
+ *            - title
+ *            - description
+ *            - instructions
+ *            - portion_amount
+ *            - owner
+ *            - ingredients
+ *
+ *      RecipeInput:
+ *          type: object
+ *          properties:
+ *            title:
+ *              type: string
+ *              description: Recipe title.
+ *            description:
+ *              type: string
+ *              description: Recipe description.
+ *            instructions:
+ *              type: string
+ *              description: Recipe instructions.
+ *            portion_amount:
+ *              type: number
+ *              description: Amount of portions the recipe serves.
+ *            ownerUsername:
+ *              type: string
+ *              description: Username of the recipe owner.
+ *            ingredients:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/IngredientInput'
+ *          required:
+ *            - title
+ *            - description
+ *            - instructions
+ *            - portion_amount
+ *            - ownerUsername
+ *            - ingredients
+ * 
+ *      User:
+ *          type: object
+ *          properties:
+ *            id:
+ *              type: number
+ *            userName:
+ *              type: string
+ *            firstName:
+ *              type: string
+ *            lastName:
+ *              type: string
+ *            email:
+ *              type: string
+ *          required:
+ *            - id
+ *            - userName
+ *            - firstName
+ *            - lastName
+ *            - email
+ *
+ *      UserInput:
+ *          type: object
+ *          properties:
+ *            userName:
+ *              type: string
+ *            firstName:
+ *              type: string
+ *            lastName:
+ *              type: string
+ *            email:
+ *              type: string
+ *          required:
+ *            - userName
+ *            - firstName
+ *            - lastName
+ *            - email
+ * 
+ *      Ingredient:
+ *          type: object
+ *          properties:
+ *            name:
+ *              type: string
+ *            quantity:
+ *              type: number
+ *          required:
+ *            - name
+ *            - quantity
+ * 
+ *      IngredientInput:
+ *          type: object
+ *          properties:
+ *            name:
+ *              type: string
+ *            quantity:
+ *              type: number
+ *          required:
+ *            - name
+ *            - quantity
  */
+
+
 
 
 import express, { NextFunction, Request, Response } from 'express';
@@ -67,6 +171,50 @@ recipeRouter.get('/', async (req: Request, res: Response, next: NextFunction) =>
       } catch (error) {
         res.status(400).json({ status: 'error', errorMessage: (error as Error).message});
       }
+});
+
+/**
+ * @swagger
+ * /recipes:
+ *   post:
+ *     summary: Create a new recipe
+ *     tags: [Recipes]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RecipeInput'
+ *     responses:
+ *       201:
+ *         description: The newly created recipe.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Recipe'
+ *       400:
+ *         description: Bad request or validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 errorMessage:
+ *                   type: string
+ */
+
+
+recipeRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+      const {title,description,instructions,portion_amount,ownerUsername,ingredients } = req.body;
+      const recipe = await recipeService.createRecipe({title,description,instructions,portion_amount,ownerUsername,ingredients});
+      res.status(200).json(recipe);
+    } catch (error) {
+      res.status(400).json({ status: 'error', errorMessage: (error as Error).message });
+    }
 });
 
 export { recipeRouter };

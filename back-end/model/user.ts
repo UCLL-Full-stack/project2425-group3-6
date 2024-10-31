@@ -1,3 +1,5 @@
+import { Recipe } from "./recipe";
+
 export class User{
 
     private id?: number|undefined;
@@ -6,6 +8,7 @@ export class User{
     private lastName: string;
     private password: string;
     private email:string;
+    private recipes:Recipe[]
 
     constructor(user:{id?:number|undefined, userName:string, firstName:string, lastName: string, password: string, email: string})
     {
@@ -15,6 +18,7 @@ export class User{
         this.lastName = user.lastName
         this.password = user.password
         this.email = user.email
+        this.recipes = []
     }
 
     getId():number|undefined {
@@ -36,6 +40,16 @@ export class User{
     getEmail() : string {
         return this.email
     }
-    
+    getRecipes() : Recipe[]{
+        return this.recipes
+    }
+
+    addRecipeToUser(recipe: Recipe) {
+        if (!recipe) throw new Error('Recipe is required');
+        if (this.recipes.includes(recipe))
+            throw new Error('Recipe is already added to this user');
+        this.recipes.push(recipe);
+        
+    }
 
 }

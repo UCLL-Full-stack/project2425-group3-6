@@ -1,4 +1,7 @@
+import { Ingredient } from "../model/ingredient";
 import { Recipe } from "../model/recipe"
+import { User } from "../model/user";
+import userDb from "./user.db";
 
 const recipes = [
     new Recipe({
@@ -6,14 +9,18 @@ const recipes = [
         title: "Cheesecake",
         description: "A cake made with cheese",
         instructions: "Create the cake",
-        portion_amount: 1
+        portion_amount: 1,
+        ownerUsername: "janedoe"
+        ,ingredients: []
     }),
     new Recipe({
         id: 2,
         title: "Tomato soup",
         description: "A soup made with tomato",
         instructions: "Create the soup",
-        portion_amount: 6
+        portion_amount: 6,
+        ownerUsername: "janedoe"
+        ,ingredients:[]
     }),
 ]
 
@@ -30,7 +37,39 @@ const getRecipeById = ({ id }: { id: number }): Recipe|null => {
     else return null
 };
 
+const createRecipe = ({
+    title,
+    description,
+    instructions,
+    portion_amount,
+    ownerUsername,
+    ingredients
+}: {
+    title: string;
+    description: string;
+    instructions: string;
+    portion_amount: number;
+    ownerUsername: string;
+    ingredients: Ingredient[]
+}): Recipe => {
+    const newRecipe = new Recipe({
+        title,
+        description,
+        instructions,
+        portion_amount,
+        ownerUsername,
+        ingredients
+    });
+
+    const owner = userDb.getUserByUsername({ username: ownerUsername });
+    owner?.addRecipeToUser(newRecipe)
+    recipes.push(newRecipe);
+    return newRecipe;
+}
+
+
 export default {
     getAllRecipes,
-    getRecipeById
+    getRecipeById,
+    createRecipe
 };

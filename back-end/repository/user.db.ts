@@ -1,3 +1,4 @@
+import { Recipe } from "../model/recipe";
 import { User } from "../model/user";
 
 const users = [
@@ -7,7 +8,9 @@ const users = [
         firstName:"John",
         lastName:"Doe",
         password:"Johndoe123",
-        email:"johndoe@outlook.com"
+        email:"johndoe@outlook.com",
+        
+
     }),
 
     new User({
@@ -19,6 +22,8 @@ const users = [
         email:"janedoe@outlook.com"
     })
 ];
+
+
 
 const getAllUsers = (): User[] => {
     return users;
@@ -32,7 +37,29 @@ const getUserById = ({ id }: { id: number }): User|null => {
     else return null
 };
 
+const getUserByUsername = ({username} : {username: string}): User | null => {
+    return users.find(user => user.getUserName() === username) || null;
+};
+
+
+const addRecipeToUser = (userId: number, recipe: Recipe): User | null => {
+    const user = getUserById({ id: userId });
+    
+    if (!user) {
+        throw new Error(`User with ID ${userId} not found`);
+    }
+    try {
+        user.addRecipeToUser(recipe);
+    } catch (error) {
+        console.error(`Error adding recipe to user`);
+        return null;
+    }
+    return user;
+};
+
 export default {
+    getUserByUsername,
     getAllUsers,
-    getUserById
+    getUserById,
+    addRecipeToUser
 };

@@ -1,3 +1,4 @@
+import { Recipe } from "../model/recipe";
 import { User } from "../model/user";
 import userDb from "../repository/user.db";
 
@@ -14,5 +15,15 @@ const getUserById = (id:number): User =>{
     }
     else{throw new Error(`Error encountered in the backend.`)}
 };
+
+
+
+//TBD
+const addRecipeToUser = (userId:number, recipe:Recipe) => {
+    const user = userDb.addRecipeToUser(userId, recipe)
+}
+
+
+
 
 export default { getAllUsers, getUserById };
