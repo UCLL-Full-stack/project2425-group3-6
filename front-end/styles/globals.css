@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://use.typekit.net/qtm2dsn.css");
+/* global variables */
+:root {
+}
+
+@layer base {
+  
+  body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+  }
+
+  .titletext {
+    font-family: "wigwag-bold", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .titletext2 {
+    font-family: "fatfrank", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .modal {
+    position: absolute; /* Absolute positioning for proper centering */
+    top: 50%;          /* Move the modal down to the center */
+    left: 50%;         /* Move the modal to the center */
+    transform: translate(-50%, -50%); /* Translate to truly center it */
+}
+
+  
+  
+}
