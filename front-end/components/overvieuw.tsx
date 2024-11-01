@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Recipe } from "@types";
+import { Ingredient, Recipe } from "@types";
 import Modal from 'react-modal';
 import RecipeService from "@services/recipeService";
 import { useRouter } from "next/router";
 import userService from "@services/userService";
+import IngredientService from "@services/ingredientService";
 
 interface RecipeOvervieuwProps {
     userName: string; // Definieer de prop
@@ -11,16 +12,20 @@ interface RecipeOvervieuwProps {
 
 const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
     const [recepis, setRecepis] = useState<Recipe[]>([]);
-    const [recipeTitle, setRecipeTitle] = useState("Spaghetti");
-    const [recipeIngredients, setRecipeIngredients] = useState("pasta, tomatensaus, kaas");
-    const [recipeInstructions, setRecipeInstructions] = useState("1. kook de pasta 2. voeg de saus aan de pasta toe 3. voeg kaas toe 4. eet smakelijk");
+    const [ingredients, setIngredients] = useState<Ingredient[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [instructions, setInstructions] = useState('');
     const [portionAmount, setPortionAmount] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
+    const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
     const router = useRouter();
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const filteredIngredients = ingredients.filter(ingredient => 
+        ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
 
     useEffect(() => {
@@ -33,7 +38,17 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
                 console.error("Error fetching data:", error);
             }
         };
+        const fetchDataIngredients = async () => {
+            console.log(userName)
+            try {
+                const data = await IngredientService.getAllIngredients();
+                setIngredients(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
         fetchDataProjects();
+        fetchDataIngredients();
     }, []);
 
     const handleModalClose = () => {
@@ -65,6 +80,11 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
           setErrorMessage('Portion amount is required.');
           return;
         }
+
+        if (selectedIngredients.length < 1) {
+            setErrorMessage('Ingredients are required.');
+            return;
+          }
     
     
         try {
@@ -74,7 +94,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
               instructions,
               portion_amount: portionAmount,
               ownerUsername: userName,
-              ingredients: []
+              ingredients: selectedIngredients
           });
           if(recipe){
             router.reload()
@@ -84,6 +104,18 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
         }
       };
 
+      const toggleIngredientSelection = (ingredient: Ingredient) => {
+        setSelectedIngredients((prevSelected) => {
+            if (prevSelected.includes(ingredient)) {
+                // If ingredient is already selected, remove it
+                return prevSelected.filter((i) => i.id !== ingredient.id);
+            } else {
+                // If not, add it to the selection
+                return [...prevSelected, ingredient];
+            }
+        });
+    };
+
     return (
         <>
             <style suppressHydrationWarning>
@@ -92,16 +124,16 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
             <div className="z-10 absolute w-screen">
                 <div className="flex flex-wrap justify-evenly w-screen px-10 mt-14">
                     {recepis.map((recipe) => (
-                        <div key={recipe.id} className="bg-[#fccfda] w-[30%] rounded-md p-5 flex flex-col justify-between">
-                            <div>
-                                <h2 className="text-3xl text-black capitalize mb-5">{recipe.title}</h2>
-                                <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
-                            </div>
-                            <button className="mt-4 self-end">
-                                <img src="./share.svg" alt="Share" height={30} width={30} />
-                            </button>
-                        </div>
-                    ))}
+                                    <div key={recipe.id} className="bg-[#fccfda] w-[30%] rounded-md p-5 flex flex-col justify-between">
+                                        <div>
+                                            <h2 className="text-3xl text-black capitalize mb-5">{recipe.title}</h2>
+                                            <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
+                                        </div>
+                                        <button className="mt-4 self-end">
+                                            <img src="./share.svg" alt="Share" height={30} width={30} />
+                                        </button>
+                                    </div>
+                                ))}
                 </div>
 
                 {/* Plus knop rechtsonder in het scherm */}
@@ -145,6 +177,47 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
                                     value={portionAmount}
                                     onChange={(e) => setPortionAmount(Number(e.target.value))} // Zet de waarde om naar een nummer
                                 />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium mb-1">Ingredients</label>
+                            {/* Zoekbalk */}
+                            <input 
+                                type="text" 
+                                placeholder="Zoek ingrediënten..." 
+                                value={searchTerm} 
+                                onChange={(e) => setSearchTerm(e.target.value)} 
+                                className="mb-2 p-2 border rounded w-full"
+                            />
+                            <div className="max-h-64 overflow-y-auto">
+                                {filteredIngredients.map((ingredient) => (
+                                    <div key={ingredient.id} className="bg-gray-100 rounded-md flex items-center justify-between mb-2">
+                                        <div>
+                                            <p className="text-black">{ingredient.name}</p>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => toggleIngredientSelection(ingredient)}
+                                            className={`mt-2 p-2 rounded ${selectedIngredients.includes(ingredient) ? 'bg-green-500' : 'bg-blue-500'} text-white`}
+                                        >
+                                            {selectedIngredients.includes(ingredient) ? 'Remove' : 'Add'}
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div>
+                        <label className="block text-sm font-medium mb-1">Selected Ingredients</label>
+                            <div className="max-h-64 overflow-y-auto flex gap-1">
+                                {selectedIngredients.map((ingredient) => (
+                                    <div key={ingredient.id} className="bg-gray-100 rounded-md mb-2 p-2">
+                                        <div>
+                                            <p className="text-black">{ingredient.name}</p>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 

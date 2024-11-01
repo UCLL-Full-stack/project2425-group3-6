@@ -43,7 +43,6 @@ export class Recipe{
         return this.ownerUsername
     }
     getIngredients() : Ingredient[]{
-
         return this.ingredients
     }
     setOwnerUsername(username: string): void {

@@ -22,10 +22,10 @@ export type Recipe = {
 };
 
 export type Ingredient = {
-  id?: number;
-  title : string;
-  description : string;
-  instructions: string;
-  portion_amount : number;
-  owner: User;
+  id?: number|undefined;
+  name : string;
+  calories : number;
+  fats: number;
+  proteins : number;
+  carbohydrates: number;
 };

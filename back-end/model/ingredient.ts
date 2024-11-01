@@ -7,7 +7,6 @@ export class Ingredient{
     private fats: number;
     private proteins: number;
     private carbohydrates: number;
-    private recipes: Recipe[];
     
     constructor(ingredient:{id?:number|undefined, name: string; calories: number, fats:number,proteins:number,carbohydrates: number })
     {
@@ -17,7 +16,6 @@ export class Ingredient{
         this.fats = ingredient.fats
         this.proteins = ingredient.proteins
         this.carbohydrates = ingredient.carbohydrates
-        this.recipes = []
 
     }
 
@@ -38,16 +36,6 @@ export class Ingredient{
     }
     getCarbohydrates(): number{
         return this.carbohydrates
-    }
-    getRecipes() : Recipe[] {
-        return this.recipes
-    }
-    addRecipeToingredient(recipe: Recipe) {
-        if (!recipe) throw new Error('Recipe is required');
-        if (this.recipes.includes(recipe))
-            throw new Error('This ingredient was already added to the Recipe');
-        this.recipes.push(recipe);
-        
     }
 
 

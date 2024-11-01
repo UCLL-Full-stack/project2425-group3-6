@@ -15,4 +15,10 @@ const getIngredientById = (id:number): Ingredient =>{
     else{throw new Error(`Error encountered in the backend.`)}
 };
 
-export default { getAllIngredients, getIngredientById  };
+const searchIngredients = (query: string): Ingredient[] => {
+    // Use the ingredientDb to perform the search
+    const results = ingredientDb.searchIngredients(query);
+    return results;
+};
+
+export default { getAllIngredients, getIngredientById , searchIngredients };

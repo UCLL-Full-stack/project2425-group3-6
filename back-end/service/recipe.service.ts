@@ -1,7 +1,10 @@
+import { Ingredient } from "../model/ingredient";
 import { Recipe } from "../model/recipe";
 import recipeDb from "../repository/recipe.db";
 import userDb from "../repository/user.db";
-import { RecipeInput } from "../types";
+import { IngredientInput, RecipeInput } from "../types";
+import ingredientService from "./ingredient.service";
+
 
 const getAllRecipes = (): Recipe[] => {
     return recipeDb.getAllRecipes() ;
@@ -27,28 +30,36 @@ const getRecipeByUser = (userName: string): Recipe[] =>{
     else{throw new Error(`Error encountered in the backend.`)}
 };
 
-const createRecipe = ({title,description,instructions,portion_amount,ownerUsername,ingredients }: RecipeInput): Recipe => {
+const createRecipe = async ({
+    title,
+    description,
+    instructions,
+    portion_amount,
+    ownerUsername,
+    ingredients
+}: RecipeInput): Promise<Recipe> => {
+    const ingredientsRecipe: Ingredient[] = []; // Zorg ervoor dat het type goed is gedefinieerd
 
-    const newRecipe = new Recipe({
+    // Gebruik Promise.all om alle asynchrone aanroepen tegelijk te verwerken
+    const ingredientPromises = ingredients.map(async (ingredient) => {
+        if (ingredient.id) { // Controleer of het id aanwezig is
+            const ingredientData = await ingredientService.getIngredientById(ingredient.id);
+            ingredientsRecipe.push(ingredientData); // Voeg het ingredient toe aan de lijst
+        }
+    });
+
+    // Wacht op alle promises
+    await Promise.all(ingredientPromises);
+
+    return recipeDb.createRecipe({
         title,
         description,
         instructions,
         portion_amount,
         ownerUsername,
-        ingredients:[]
+        ingredients: ingredientsRecipe // Gebruik de verzamelde ingrediënten
     });
 
-    const createdRecipe = recipeDb.createRecipe({
-        title: newRecipe.getTitle(),
-        description : newRecipe.getDescription(),
-        instructions: newRecipe.getInstructions(),
-        portion_amount : newRecipe.getPortionAmount(),
-        ownerUsername : newRecipe.getOwnerUsername(),
-        ingredients: newRecipe.getIngredients()
-
-    });
-
-
-    return createdRecipe;
 };
+
 export default { getAllRecipes, getRecipeById, createRecipe, getRecipeByUser};
