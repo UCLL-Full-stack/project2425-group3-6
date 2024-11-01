@@ -57,9 +57,35 @@ const addRecipeToUser = (userId: number, recipe: Recipe): User | null => {
     return user;
 };
 
+const createUser = ({
+    userName,
+    firstName,
+    lastName,
+    password,
+    email
+}: {
+    userName: string;
+    firstName: string;
+    lastName: string;
+    password: string;
+    email:string;
+}): User => {
+    const newUser = new User({
+        userName,
+        firstName,
+        lastName,
+        password,
+        email
+    });
+
+    users.push(newUser);
+    return newUser;
+}
+
 export default {
     getUserByUsername,
     getAllUsers,
     getUserById,
-    addRecipeToUser
+    addRecipeToUser,
+    createUser
 };
