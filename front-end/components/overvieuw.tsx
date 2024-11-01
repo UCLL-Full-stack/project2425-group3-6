@@ -1,46 +1,88 @@
 import { useEffect, useState } from "react";
 import { Recipe } from "@types";
 import Modal from 'react-modal';
+import RecipeService from "@services/recipeService";
+import { useRouter } from "next/router";
+import userService from "@services/userService";
 
-const Overview: React.FC = () => {
+interface RecipeOvervieuwProps {
+    userName: string; // Definieer de prop
+  }
+
+const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
     const [recepis, setRecepis] = useState<Recipe[]>([]);
     const [recipeTitle, setRecipeTitle] = useState("Spaghetti");
     const [recipeIngredients, setRecipeIngredients] = useState("pasta, tomatensaus, kaas");
     const [recipeInstructions, setRecipeInstructions] = useState("1. kook de pasta 2. voeg de saus aan de pasta toe 3. voeg kaas toe 4. eet smakelijk");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [instructions, setInstructions] = useState('');
+    const [portionAmount, setPortionAmount] = useState(0);
+    const [errorMessage, setErrorMessage] = useState('');
+    const router = useRouter();
 
-    const fetchData = () => {
-        const testRecipes: Recipe[] = [
-            {
-                id: 1,
-                title: "Spaghetti Bolognese",
-                description: "Een klassieke Italiaanse pasta met rijke tomatensaus en gehakt.",
-                instructions: "Kook de pasta volgens de verpakking. Bereid de saus door gehakt aan te bakken, voeg tomatenpuree toe en laat sudderen. Serveer met pasta.",
-                portion_amount: 4,
-            },
-            {
-                id: 2,
-                title: "Caesar Salad",
-                description: "Frisse salade met romige Caesar dressing, croutons en Parmezaanse kaas.",
-                instructions: "Meng sla met dressing, voeg croutons en Parmezaanse kaas toe. Garneer met kip of ansjovis naar wens.",
-                portion_amount: 2,
-            },
-            {
-                id: 3,
-                title: "Chocolade Lava Cake",
-                description: "Warme chocoladecake met vloeibare kern, perfect als dessert.",
-                instructions: "Verwarm de oven. Meng ingrediënten en vul vormen. Bak tot de kern zacht is.",
-                portion_amount: 2,
-            },
-        ];
-        setRecepis(testRecipes);
-    }
 
-    useEffect(() => fetchData(), []);
+    useEffect(() => {
+        const fetchDataProjects = async () => {
+            console.log(userName)
+            try {
+                const data = await RecipeService.getRecipeByUser(userName);
+                setRecepis(data);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+        fetchDataProjects();
+    }, []);
 
     const handleModalClose = () => {
         setIsModalOpen(false); 
     };
+
+    const handleCreateRecipe = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setErrorMessage(''); // Reset error message at start
+
+    
+        // Check if fields are empty
+        if (!title) {
+          setErrorMessage('Title is required.');
+          return;
+        }
+    
+        if (!description) {
+          setErrorMessage('Description is required.');
+          return;
+        }
+    
+        if (!instructions) {
+          setErrorMessage('Instructions arerequired.');
+          return;
+        }
+    
+        if (!portionAmount) {
+          setErrorMessage('Portion amount is required.');
+          return;
+        }
+    
+    
+        try {
+          const recipe = await RecipeService.addRecipes({
+              title,
+              description,
+              instructions,
+              portion_amount: portionAmount,
+              ownerUsername: userName,
+              ingredients: []
+          });
+          if(recipe){
+            router.reload()
+          }
+        } catch (error: any) {
+          setErrorMessage(error.message || 'An error occurred. Please try again.');
+        }
+      };
 
     return (
         <>
@@ -80,26 +122,40 @@ const Overview: React.FC = () => {
                     <h2 className="text-2xl mb-4 text-center">Voeg Nieuw Recept Toe</h2>
                     
                     <form>
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium mb-1">Recept Titel</label>
-                            <input 
-                                type="text" 
-                                placeholder="Naam van het recept" 
-                                className="w-full p-2 border rounded-md" 
-                                required
-                                value={recipeTitle}
-                                onChange={(e) => setRecipeTitle(e.target.value)}
-                            />
+                        <div className="flex">
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium mb-1">Recept Titel</label>
+                                <input 
+                                    type="text" 
+                                    placeholder="Naam van het recept" 
+                                    className="w-full p-2 border rounded-md" 
+                                    required
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium mb-1 ml-2">Portion Amount</label>
+                                <input 
+                                    type="number"
+                                    placeholder="Aantal Porties" 
+                                    className="w-full p-2 border rounded-md ml-2" 
+                                    required
+                                    min="1"
+                                    value={portionAmount}
+                                    onChange={(e) => setPortionAmount(Number(e.target.value))} // Zet de waarde om naar een nummer
+                                />
+                            </div>
                         </div>
 
                         <div className="mb-4">
-                            <label className="block text-sm font-medium mb-1">Ingrediënten</label>
+                            <label className="block text-sm font-medium mb-1">Description</label>
                             <textarea 
-                                placeholder="Ingrediënten, gescheiden door een komma" 
+                                placeholder="Beschrijving" 
                                 className="w-full p-2 border rounded-md" 
                                 required
-                                value={recipeIngredients}
-                                onChange={(e) => setRecipeIngredients(e.target.value)}
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
                             />
                         </div>
 
@@ -109,10 +165,11 @@ const Overview: React.FC = () => {
                                 placeholder="Beschrijving van de bereidingswijze" 
                                 className="w-full p-2 border rounded-md" 
                                 required
-                                value={recipeInstructions}
-                                onChange={(e) => setRecipeInstructions(e.target.value)}
+                                value={instructions}
+                                onChange={(e) => setInstructions(e.target.value)}
                             />
                         </div>
+
 
                         <div className="flex justify-end space-x-2 mt-4">
                             <button 
@@ -125,6 +182,7 @@ const Overview: React.FC = () => {
                             <button 
                                 type="submit" 
                                 className="bg-[#2b8f0a] text-white p-2 rounded"
+                                onClick={handleCreateRecipe}
                             >
                                 Recept Toevoegen
                             </button>

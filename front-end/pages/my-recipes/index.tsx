@@ -4,6 +4,16 @@ import Header from '@components/header';
 import Login from '@components/authenticatie/Login';
 import Overview from '@components/overvieuw';
 
+const getUserName = () => {
+  if (typeof window !== 'undefined') {
+    const userName = sessionStorage.getItem('userName');
+    if (userName) {
+      return userName;
+    }
+  }
+  return '';
+}
+
 const myRecepies: React.FC = () => {
   return (
     <>
@@ -19,7 +29,7 @@ const myRecepies: React.FC = () => {
           </style>
           <div className='bg-gradient-to-br from-[#2b8f0a] to-[#8cb57f] h-[100vh] w-screen relative'>
             <h1 className='text-7xl text-white titletext2 text-center pt-10'>My Recipes</h1>
-            <Overview></Overview>
+            <Overview userName={getUserName()}></Overview>
           </div>
         </main>
       

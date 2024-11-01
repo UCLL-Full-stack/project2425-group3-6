@@ -37,6 +37,13 @@ const getRecipeById = ({ id }: { id: number }): Recipe|null => {
     else return null
 };
 
+const getRecipeByUser = ({ userName }: { userName: string }): Recipe[] | null => {
+
+    const userRecipes = recipes.filter(recipe => recipe.getOwnerUsername() === userName);
+    
+    return userRecipes.length > 0 ? userRecipes : null;
+};
+
 const createRecipe = ({
     title,
     description,
@@ -71,5 +78,6 @@ const createRecipe = ({
 export default {
     getAllRecipes,
     getRecipeById,
-    createRecipe
+    createRecipe,
+    getRecipeByUser
 };

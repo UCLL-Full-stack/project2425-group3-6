@@ -2,7 +2,7 @@
 
 export type User = {
   id?: number|undefined;
-  username: string;
+  userName: string;
   firstName: string;
   lastName: string;
   password: string;
@@ -10,10 +10,22 @@ export type User = {
   recipes?: Recipe[] | undefined;
 };
 
+
 export type Recipe = {
   id?: number|undefined;
   title : string;
   description : string;
   instructions: string;
   portion_amount : number;
-}
+  ownerUsername: string;
+  ingredients: Ingredient[];
+};
+
+export type Ingredient = {
+  id?: number;
+  title : string;
+  description : string;
+  instructions: string;
+  portion_amount : number;
+  owner: User;
+};

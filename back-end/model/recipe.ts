@@ -39,7 +39,7 @@ export class Recipe{
     getPortionAmount(): number{
         return this.portion_amount
     }
-    getownerUsername(): string{
+    getOwnerUsername(): string{
         return this.ownerUsername
     }
     getIngredients() : Ingredient[]{

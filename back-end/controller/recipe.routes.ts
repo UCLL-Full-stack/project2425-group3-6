@@ -217,4 +217,64 @@ recipeRouter.post('/', async (req: Request, res: Response, next: NextFunction) =
     }
 });
 
+/**
+ * @swagger
+ * /recipes/user/{username}:
+ *   get:
+ *     summary: Get all recipes for a specific user.
+ *     parameters:
+ *       - name: username
+ *         in: path
+ *         required: true
+ *         description: The username of the user whose recipes to retrieve.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: A JSON array of recipes belonging to the specified user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Recipe'
+ *       404:
+ *         description: User not found or no recipes found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 errorMessage:
+ *                   type: string
+ *       400:
+ *         description: Error occurred while fetching user recipes.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 errorMessage:
+ *                   type: string
+ *     description: Returns a list of all recipes for a specific user.
+ */
+recipeRouter.get('/user/:username', async (req: Request, res: Response, next: NextFunction) => {
+  const { username } = req.params; // Haal de gebruikersnaam op uit de URL-parameters
+  try {
+      const recipes = await recipeService.getRecipeByUser(username); // Voeg deze servicefunctie toe
+      if (recipes.length > 0) {
+          res.status(200).json(recipes); // Retourneer de recepten als ze gevonden zijn
+      } else {
+          res.status(404).json({ status: 'error', errorMessage: 'No recipes found for this user.' });
+      }
+  } catch (error) {
+      res.status(400).json({ status: 'error', errorMessage: (error as Error).message });
+  }
+});
+
+
 export { recipeRouter };
