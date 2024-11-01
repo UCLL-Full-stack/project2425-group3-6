@@ -1,13 +1,13 @@
 
 
 export type User = {
-  firstName?: string;
-  lastName?: string;
-  fullname?: string;
-  email?: string;
-  username?: string;
-  password?: string;
-  role?: string;
+  id?: number|undefined;
+  username: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  email: string;
+  recipes?: Recipe[] | undefined;
 };
 
 export type Recipe = {
