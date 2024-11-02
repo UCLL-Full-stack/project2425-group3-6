@@ -25,7 +25,6 @@ export class Measureunit{
         return this.size
     }
     getIngredients(): Ingredient[]{
-
         return this.ingredients
     }
 }

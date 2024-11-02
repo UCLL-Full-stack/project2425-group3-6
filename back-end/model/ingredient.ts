@@ -7,8 +7,10 @@ export class Ingredient{
     private fats: number;
     private proteins: number;
     private carbohydrates: number;
+    private amount?: number|undefined;
+    private unit?: string|undefined;
     
-    constructor(ingredient:{id?:number|undefined, name: string; calories: number, fats:number,proteins:number,carbohydrates: number })
+    constructor(ingredient:{id?:number|undefined, name: string; calories: number, fats:number,proteins:number,carbohydrates: number , amount?: number|undefined, unit?: string|undefined})
     {
         this.id = ingredient.id
         this.name = ingredient.name
@@ -16,6 +18,8 @@ export class Ingredient{
         this.fats = ingredient.fats
         this.proteins = ingredient.proteins
         this.carbohydrates = ingredient.carbohydrates
+        this.amount = ingredient.amount
+        this.unit = ingredient.unit
 
     }
 
@@ -37,6 +41,17 @@ export class Ingredient{
     getCarbohydrates(): number{
         return this.carbohydrates
     }
-
+    getAmount():number|undefined{
+        return this.amount
+    }
+    getUnit(): string|undefined{
+        return this.unit
+    }
+    setAmount(amount: number): void {
+        this.amount = amount;
+    }
+    setUnit(unit: string): void {
+        this.unit = unit;
+    }
 
 }

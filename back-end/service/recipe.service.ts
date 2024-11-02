@@ -38,17 +38,19 @@ const createRecipe = async ({
     ownerUsername,
     ingredients
 }: RecipeInput): Promise<Recipe> => {
-    const ingredientsRecipe: Ingredient[] = []; // Zorg ervoor dat het type goed is gedefinieerd
+    const ingredientsRecipe: Ingredient[] = []; 
 
-    // Gebruik Promise.all om alle asynchrone aanroepen tegelijk te verwerken
     const ingredientPromises = ingredients.map(async (ingredient) => {
-        if (ingredient.id) { // Controleer of het id aanwezig is
+        if (ingredient.id) { 
             const ingredientData = await ingredientService.getIngredientById(ingredient.id);
-            ingredientsRecipe.push(ingredientData); // Voeg het ingredient toe aan de lijst
+            if(ingredient.amount && ingredient.unit){
+                ingredientData.setAmount(ingredient.amount)
+                ingredientData.setUnit(ingredient.unit)
+            }
+            ingredientsRecipe.push(ingredientData);
         }
     });
 
-    // Wacht op alle promises
     await Promise.all(ingredientPromises);
 
     return recipeDb.createRecipe({

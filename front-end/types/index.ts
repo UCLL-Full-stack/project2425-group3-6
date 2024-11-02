@@ -29,5 +29,5 @@ export type Ingredient = {
   proteins : number;
   carbohydrates: number;
   amount? : number|undefined;
-  type? : string|undefined;
+  unit? : string|undefined;
 };

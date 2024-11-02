@@ -116,7 +116,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
 
       const addIngredient = (ingredient: Ingredient, amount: number, unit: string) => {
         ingredient.amount = amount;
-        ingredient.type = unit;
+        ingredient.unit = unit;
         setSelectedIngredients((prevSelected) => {
             if (!prevSelected.find((i) => i.id === ingredient.id)) {
                 console.log([...prevSelected, ingredient])
@@ -226,7 +226,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
                                                     {selectedIngredients.includes(ingredient) ? (
                                                         <div className="flex">
                                                             <div className=" bg-[#2b8f0a] p-2 rounded text-white mr-2">
-                                                                {ingredient.amount} {ingredient.type}
+                                                                {ingredient.amount} {ingredient.unit}
                                                             </div>
                                                             <button
                                                                 type="button"

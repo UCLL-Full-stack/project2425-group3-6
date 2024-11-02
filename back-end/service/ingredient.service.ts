@@ -16,7 +16,6 @@ const getIngredientById = (id:number): Ingredient =>{
 };
 
 const searchIngredients = (query: string): Ingredient[] => {
-    // Use the ingredientDb to perform the search
     const results = ingredientDb.searchIngredients(query);
     return results;
 };
