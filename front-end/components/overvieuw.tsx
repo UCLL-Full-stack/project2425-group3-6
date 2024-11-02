@@ -99,6 +99,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
     
         try {
           const recipe = await RecipeService.addRecipes({
+              id : 0,
               title,
               description,
               instructions,
@@ -128,11 +129,15 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
         
     };
 
-    // Functie om een ingrediënt te verwijderen uit de selectie
     const removeIngredient = (ingredient: Ingredient) => {
         setSelectedIngredients((prevSelected) => 
             prevSelected.filter((i) => i.id !== ingredient.id)
         );
+    };
+
+    const removeRecipe = async (id: number) => {
+        await RecipeService.deleteRecipeById(id);
+        router.reload()
     };
     
 
@@ -146,12 +151,21 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
                     {recepis.map((recipe) => (
                                     <div key={recipe.id} className="bg-[#fccfda] w-[30%] rounded-md p-5 flex flex-col justify-between">
                                         <div>
-                                            <h2 className="text-3xl text-black capitalize mb-5">{recipe.title}</h2>
+                                            <div className="flex justify-between">
+                                                <h2 className="text-3xl text-black capitalize mb-5">{recipe.title}</h2>
+                                                <button 
+                                                onClick={() => removeRecipe(recipe.id)}
+                                                className="bg-[#2b8f0a] p-2 rounded text-white">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                            
                                             <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
                                         </div>
                                         <button className="mt-4 self-end">
                                             <img src="./share.svg" alt="Share" height={30} width={30} />
                                         </button>
+                                        
                                     </div>
                                 ))}
                 </div>

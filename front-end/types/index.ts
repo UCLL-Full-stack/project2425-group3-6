@@ -12,7 +12,7 @@ export type User = {
 
 
 export type Recipe = {
-  id?: number|undefined;
+  id: number;
   title : string;
   description : string;
   instructions: string;

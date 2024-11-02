@@ -51,6 +51,9 @@ export class Recipe{
         }
         this.ownerUsername = username;
     }
+    setId(id: number): void {
+        this.id = id;
+    }
 
 
 }

@@ -20,6 +20,16 @@ const getRecipeById = (id:number): Recipe =>{
     else{throw new Error(`Error encountered in the backend.`)}
 };
 
+const deletRecipeById = (id:number): Recipe =>{
+    const recipe = recipeDb.deletRecipeById({id})
+    if(recipe)
+        return recipe
+    else if(recipe == null){
+        throw new Error(`Recipe with id ${id} does not exist.`)
+    }
+    else{throw new Error(`Error encountered in the backend.`)}
+};
+
 const getRecipeByUser = (userName: string): Recipe[] =>{
     const recipe = recipeDb.getRecipeByUser({userName})
     if(recipe)
@@ -52,16 +62,18 @@ const createRecipe = async ({
     });
 
     await Promise.all(ingredientPromises);
+    const id = recipeDb.getAllRecipes().length + 1
 
     return recipeDb.createRecipe({
+        id,
         title,
         description,
         instructions,
         portion_amount,
         ownerUsername,
-        ingredients: ingredientsRecipe // Gebruik de verzamelde ingrediënten
+        ingredients: ingredientsRecipe
     });
 
 };
 
-export default { getAllRecipes, getRecipeById, createRecipe, getRecipeByUser};
+export default { getAllRecipes, getRecipeById, createRecipe, getRecipeByUser, deletRecipeById};

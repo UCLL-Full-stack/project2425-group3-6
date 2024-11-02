@@ -29,11 +29,22 @@ const getAllRecipes = async () => {
         body: JSON.stringify(recipe),
     });
   };
+
+  const deleteRecipeById = async (id: number) => {
+    const response = await fetch(`http://localhost:3000/recipes/${id}`, {
+        method: "DELETE",
+    });
+    if (!response.ok) {
+        throw new Error(`Failed to delete recipe.`);
+    }
+};
+
   
   const RecipeService = {
     getAllRecipes,
     getRecipeByUser,
     addRecipes,
+    deleteRecipeById,
   };
   
   export default RecipeService;

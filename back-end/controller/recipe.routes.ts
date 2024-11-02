@@ -276,5 +276,60 @@ recipeRouter.get('/user/:username', async (req: Request, res: Response, next: Ne
   }
 });
 
+/**
+ * @swagger
+ * /recipes/{id}:
+ *   delete:
+ *     summary: Delete a recipe by ID
+ *     tags: [Recipes]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the recipe to delete.
+ *         schema:
+ *           type: number
+ *           format: int64
+ *     responses:
+ *       204:
+ *         description: Recipe deleted successfully.
+ *       404:
+ *         description: Recipe not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 errorMessage:
+ *                   type: string
+ *       400:
+ *         description: Error occurred while deleting the recipe.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 errorMessage:
+ *                   type: string
+ */
+recipeRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params; // Haal het ID op uit de URL-parameters
+  try {
+      const deletedRecipe = await recipeService.deletRecipeById(Number(id)); // Verwijder het recept met het opgegeven ID
+      if (deletedRecipe) {
+          res.status(204).send(); // Stuur een 204 No Content als het recept succesvol is verwijderd
+      } else {
+          res.status(404).json({ status: 'error', errorMessage: 'Recipe not found.' }); // Als het recept niet bestaat
+      }
+  } catch (error) {
+      res.status(400).json({ status: 'error', errorMessage: (error as Error).message }); // Verwerk eventuele fouten
+  }
+});
+
+
 
 export { recipeRouter };

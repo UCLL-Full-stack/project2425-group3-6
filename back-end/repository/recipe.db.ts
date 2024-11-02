@@ -37,6 +37,16 @@ const getRecipeById = ({ id }: { id: number }): Recipe|null => {
     else return null
 };
 
+const deletRecipeById = ({ id }: { id: number }): Recipe|null => {
+    const index = recipes.findIndex(recipe => recipe.getId() === id);
+
+    if (index !== -1) {
+        const [deletedRecipe] = recipes.splice(index, 1);
+        return deletedRecipe;
+    }
+    else return null
+};
+
 const getRecipeByUser = ({ userName }: { userName: string }): Recipe[] | null => {
 
     const userRecipes = recipes.filter(recipe => recipe.getOwnerUsername() === userName);
@@ -45,6 +55,7 @@ const getRecipeByUser = ({ userName }: { userName: string }): Recipe[] | null =>
 };
 
 const createRecipe = ({
+    id,
     title,
     description,
     instructions,
@@ -52,6 +63,7 @@ const createRecipe = ({
     ownerUsername,
     ingredients
 }: {
+    id: number;
     title: string;
     description: string;
     instructions: string;
@@ -60,6 +72,7 @@ const createRecipe = ({
     ingredients: Ingredient[]
 }): Recipe => {
     const newRecipe = new Recipe({
+        id,
         title,
         description,
         instructions,
@@ -79,5 +92,6 @@ export default {
     getAllRecipes,
     getRecipeById,
     createRecipe,
-    getRecipeByUser
+    getRecipeByUser,
+    deletRecipeById
 };
