@@ -22,10 +22,14 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
     const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
-
-    const filteredIngredients = ingredients.filter(ingredient => 
+    const [ingredientAmount, setIngredienAmount] = useState(0);
+    const [ingredientType, setIngredienType] = useState("g");
+    
+    const filteredIngredients = ingredients
+    .filter(ingredient => 
         ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    )
+
 
 
     useEffect(() => {
@@ -53,14 +57,20 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
 
     const handleModalClose = () => {
         setIsModalOpen(false); 
+        setErrorMessage("")
+        setSelectedIngredients([])
+        setInstructions("")
+        setSearchTerm("")
+        setTitle("")
+        setDescription("")
+        setPortionAmount(0)
     };
 
     const handleCreateRecipe = async (e: React.FormEvent) => {
         e.preventDefault();
-        setErrorMessage(''); // Reset error message at start
+        setErrorMessage(''); 
 
     
-        // Check if fields are empty
         if (!title) {
           setErrorMessage('Title is required.');
           return;
@@ -104,17 +114,27 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
         }
       };
 
-      const toggleIngredientSelection = (ingredient: Ingredient) => {
+      const addIngredient = (ingredient: Ingredient, amount: number, unit: string) => {
+        ingredient.amount = amount;
+        ingredient.type = unit;
         setSelectedIngredients((prevSelected) => {
-            if (prevSelected.includes(ingredient)) {
-                // If ingredient is already selected, remove it
-                return prevSelected.filter((i) => i.id !== ingredient.id);
-            } else {
-                // If not, add it to the selection
+            if (!prevSelected.find((i) => i.id === ingredient.id)) {
+                console.log([...prevSelected, ingredient])
                 return [...prevSelected, ingredient];
             }
+            return prevSelected;
         });
+        setIngredienType("g");
+        
     };
+
+    // Functie om een ingrediënt te verwijderen uit de selectie
+    const removeIngredient = (ingredient: Ingredient) => {
+        setSelectedIngredients((prevSelected) => 
+            prevSelected.filter((i) => i.id !== ingredient.id)
+        );
+    };
+    
 
     return (
         <>
@@ -136,7 +156,6 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
                                 ))}
                 </div>
 
-                {/* Plus knop rechtsonder in het scherm */}
                 <button
                     className="fixed bottom-5 right-5 bg-[#fccfda] p-3 rounded-full shadow-lg flex justify-center items-center"
                     onClick={() => setIsModalOpen(true)}
@@ -147,102 +166,156 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
                 <Modal 
                     isOpen={isModalOpen} 
                     onRequestClose={handleModalClose} 
-                    contentLabel="Voeg Recept Toe"
-                    className="modal z-30 bg-[#fccfda] p-6 rounded-md shadow-lg w-[500px] modal"
+                    contentLabel="Add New Recipe"
+                    className="modal z-30 bg-[#fccfda] p-6 rounded-md shadow-lg w-[1200px] modal"
                     overlayClassName="fixed inset-0 bg-black h-screen w-screen bg-opacity-70 z-20"
                 >
-                    <h2 className="text-2xl mb-4 text-center">Voeg Nieuw Recept Toe</h2>
+                    <h2 className="text-2xl mb-6 text-center">Add New Recipe</h2>
+                    {errorMessage && (
+                      <div className="mb-4 text-red-500 text-xl text-center">{errorMessage}</div>
+                    )}
                     
                     <form>
-                        <div className="flex">
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium mb-1">Recept Titel</label>
-                                <input 
-                                    type="text" 
-                                    placeholder="Naam van het recept" 
-                                    className="w-full p-2 border rounded-md" 
-                                    required
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <label className="block text-sm font-medium mb-1 ml-2">Portion Amount</label>
-                                <input 
-                                    type="number"
-                                    placeholder="Aantal Porties" 
-                                    className="w-full p-2 border rounded-md ml-2" 
-                                    required
-                                    min="1"
-                                    value={portionAmount}
-                                    onChange={(e) => setPortionAmount(Number(e.target.value))} // Zet de waarde om naar een nummer
-                                />
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Ingredients</label>
-                            {/* Zoekbalk */}
-                            <input 
-                                type="text" 
-                                placeholder="Zoek ingrediënten..." 
-                                value={searchTerm} 
-                                onChange={(e) => setSearchTerm(e.target.value)} 
-                                className="mb-2 p-2 border rounded w-full"
-                            />
-                            <div className="max-h-64 overflow-y-auto">
-                                {filteredIngredients.map((ingredient) => (
-                                    <div key={ingredient.id} className="bg-gray-100 rounded-md flex items-center justify-between mb-2">
-                                        <div>
-                                            <p className="text-black">{ingredient.name}</p>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => toggleIngredientSelection(ingredient)}
-                                            className={`mt-2 p-2 rounded ${selectedIngredients.includes(ingredient) ? 'bg-green-500' : 'bg-blue-500'} text-white`}
-                                        >
-                                            {selectedIngredients.includes(ingredient) ? 'Remove' : 'Add'}
-                                        </button>
+                        <div className="flex gap-10">
+                            <div className="w-1/2">
+                                <div className="flex justify-between">
+                                    <div className="mb-4">
+                                        <label className="block font-medium  mb-1">Recept Titel</label>
+                                        <input 
+                                            type="text" 
+                                            placeholder="Name of the recipe" 
+                                            className="w-full p-2 border rounded-md" 
+                                            required
+                                            value={title}
+                                            onChange={(e) => setTitle(e.target.value)}
+                                        />
                                     </div>
-                                ))}
-                            </div>
-                        </div>
+                                    <div className="mb-4">
+                                        <label className="block  font-medium mb-1 ml-2">Portion Amount</label>
+                                        <input 
+                                            type="number"
+                                            placeholder="Number of Servings" 
+                                            className="w-full p-2 border rounded-md ml-2" 
+                                            required
+                                            min="1"
+                                            value={portionAmount}
+                                            onChange={(e) => setPortionAmount(Number(e.target.value))}
+                                        />
+                                    </div>
+                                </div>
 
-                        <div>
-                        <label className="block text-sm font-medium mb-1">Selected Ingredients</label>
-                            <div className="max-h-64 overflow-y-auto flex gap-1">
-                                {selectedIngredients.map((ingredient) => (
-                                    <div key={ingredient.id} className="bg-gray-100 rounded-md mb-2 p-2">
-                                        <div>
-                                            <p className="text-black">{ingredient.name}</p>
+                                <div>
+                                    <label className="block  font-medium mb-2">Ingredients</label>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Search ingredients..." 
+                                        value={searchTerm} 
+                                        onChange={(e) => setSearchTerm(e.target.value)} 
+                                        className="mb-4 p-2 border rounded w-full"
+                                    />
+                                   <div className="max-h-80 overflow-y-auto">
+                                        {filteredIngredients.map((ingredient) => (
+                                            <div
+                                            key={ingredient.id}
+                                            className="bg-gray-100 px-4 py-2 rounded-md flex items-center justify-between mb-2"
+                                            >
+                                                <div>
+                                                    <p className="text-black">{ingredient.name}</p>
+                                                </div>
+                                                <div>
+                                                    {selectedIngredients.includes(ingredient) ? (
+                                                        <div className="flex">
+                                                            <div className=" bg-[#2b8f0a] p-2 rounded text-white mr-2">
+                                                                {ingredient.amount} {ingredient.type}
+                                                            </div>
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => removeIngredient(ingredient)}
+                                                                className="p-2 rounded bg-[#2b8f0a] text-white"
+                                                            >
+                                                                Remove
+                                                            </button>
+                                                        </div>
+                                                   
+                                                    ) : (
+                                                        <div className="flex" >
+                                                                <input 
+                                                                    type="number"
+                                                                    placeholder="Amount" 
+                                                                    className="p-2 border rounded-md mr-2 w-14" 
+                                                                    min="1"
+                                                                    onChange={(e) => setIngredienAmount(Number(e.target.value))}
+                                                                />
+                                                                <select
+                                                                    className="p-2 border rounded bg-white text-black mr-2"
+                                                                    onChange={(e) => setIngredienType(e.target.value)}
+                                                                >
+                                                                    <option value="g">g</option>
+                                                                    <option value="ml">ml</option>
+                                                                    <option value="tl">tl</option>
+                                                                    <option value="el">el</option>
+                                                                    <option value="cup">cup</option>
+                                                                </select>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        if (ingredientAmount && ingredientType) {
+                                                                            addIngredient(ingredient, ingredientAmount, ingredientType);
+                                                                        }
+                                                                    }}
+                                                                    className="p-2 rounded bg-[#ff5781] text-white"
+                                                                >
+                                                                    Add
+                                                                </button>
+                                                            </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div>
+                                    <label className="block mt-2  font-medium mb-1">Selected Ingredients</label>
+                                        <div className="flex flex-wrap gap-1">
+                                            {selectedIngredients.map((ingredient) => (
+                                                <div key={ingredient.id} className="bg-gray-100 rounded-md mb-2 p-2">
+                                                    <div className="flex">
+                                                        <p className="text-black">{ingredient.name}</p>
+                                                        <button className="ml-4" 
+                                                            onClick={() => removeIngredient(ingredient)}>
+                                                            <img src="./cross.svg" alt="Add Recipe" height={10} width={10} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                ))}
+                                </div>
+                            </div>
+                            <div className="w-1/2">
+                                
+                                <div className="mb-4">
+                                    <label className="block  font-medium mb-1">Description</label>
+                                    <textarea 
+                                        placeholder="Description" 
+                                        className="w-full h-36 p-2 border rounded-md" 
+                                        required
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="mb-4">
+                                    <label className="block  font-medium mb-1">Instructies</label>
+                                    <textarea 
+                                        placeholder="Preparation method" 
+                                        className="w-full h-72 p-2 border rounded-md" 
+                                        required
+                                        value={instructions}
+                                        onChange={(e) => setInstructions(e.target.value)}
+                                    />
+                                </div>
                             </div>
                         </div>
-
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium mb-1">Description</label>
-                            <textarea 
-                                placeholder="Beschrijving" 
-                                className="w-full p-2 border rounded-md" 
-                                required
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium mb-1">Instructies</label>
-                            <textarea 
-                                placeholder="Beschrijving van de bereidingswijze" 
-                                className="w-full p-2 border rounded-md" 
-                                required
-                                value={instructions}
-                                onChange={(e) => setInstructions(e.target.value)}
-                            />
-                        </div>
-
 
                         <div className="flex justify-end space-x-2 mt-4">
                             <button 
@@ -260,6 +333,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
                                 Recept Toevoegen
                             </button>
                         </div>
+                        
                     </form>
                 </Modal>
             </div>
