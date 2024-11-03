@@ -20,7 +20,7 @@ const getRecipeById = (id:number): Recipe =>{
     else{throw new Error(`Error encountered in the backend.`)}
 };
 
-const deletRecipeById = (id:number): Recipe =>{
+const deleteRecipeById = (id:number): Recipe =>{
     const recipe = recipeDb.deletRecipeById({id})
     if(recipe)
         return recipe
@@ -76,4 +76,4 @@ const createRecipe = async ({
 
 };
 
-export default { getAllRecipes, getRecipeById, createRecipe, getRecipeByUser, deletRecipeById};
+export default { getAllRecipes, getRecipeById, createRecipe, getRecipeByUser, deleteRecipeById};

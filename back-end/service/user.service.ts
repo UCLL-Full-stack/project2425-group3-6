@@ -44,7 +44,10 @@ const addRecipeToUser = (userId:number, recipe:Recipe) => {
 }
 
 const createNewUser = ({userName, firstName, lastName, password, email}: UserInput): User => {
-
+    if(userDb.getUserByUsername({username: userName}))
+    {
+        throw new Error(`This username is taken.`)
+    }
     const newUser = new User({
         userName,
         firstName,
