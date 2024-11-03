@@ -40,6 +40,16 @@ test('given: valid values for recept, when: recept is created, then: recept is c
 
 });
 
+test('given: negative portion value amount, when: recept is created, then: an error is given', () =>{
+    //given
+    const newPortionAmount = -1
+    //when
+    const newRecept = () => new Recipe({title:newTitle,description:newDescription,instructions:newInstruction,portion_amount:newPortionAmount,ownerUsername:existingUser.getUserName(),ingredients:[existingIngredient1]})
+    //then
+    expect(newRecept).toThrow('Portion amounts should be more then 0')
+
+});
+
 test('given: valid values for recept, when: Recipe owner is added, while an owner is already assigned, then: an error is given', () =>{
     //given
     const existingRecipe = new Recipe({title:newTitle,description:newDescription,instructions:newInstruction,portion_amount:newPortionAmount,ownerUsername:existingUser.getUserName(),ingredients:[existingIngredient1]})
@@ -51,3 +61,4 @@ test('given: valid values for recept, when: Recipe owner is added, while an owne
     expect(addUsertoRecipe).toThrow('This Recipe already has an owner');
 
 });
+

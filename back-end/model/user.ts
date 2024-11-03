@@ -12,6 +12,7 @@ export class User{
 
     constructor(user:{id?:number|undefined, userName:string, firstName:string, lastName: string, password: string, email: string})
     {
+        this.validate(user)
         this.id = user.id
         this.userName = user.userName
         this.firstName = user.firstName
@@ -19,6 +20,25 @@ export class User{
         this.password = user.password
         this.email = user.email
         this.recipes = []
+    }
+
+    validate(user:{id?:number|undefined, userName:string, firstName:string, lastName: string, password: string, email: string}) {
+        if (!user.userName) {
+            throw new Error('userName is required');
+        }
+        if (!user.firstName) {
+            throw new Error('first name is required');
+        }
+        if (!user.lastName) {
+            throw new Error('last name is required');
+        }
+        if (!user.password) {
+            throw new Error('password is required');
+        }
+        if (!user.email ) {
+            throw new Error('Email is required');
+        }
+
     }
 
     getId():number|undefined {

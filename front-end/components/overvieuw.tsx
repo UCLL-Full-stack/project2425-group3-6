@@ -161,6 +161,8 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
                                             </div>
                                             
                                             <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
+                                            <p className="comic-neue-regular text-black text-xl mb-4">{recipe.portion_amount}</p>
+
                                         </div>
                                         <button className="mt-4 self-end">
                                             <img src="./share.svg" alt="Share" height={30} width={30} />

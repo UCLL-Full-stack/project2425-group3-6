@@ -12,6 +12,8 @@ export class Recipe{
     
     constructor(recipe:{id?:number|undefined,title:string, description:string, instructions:string,portion_amount:number, ownerUsername: string , ingredients:Ingredient[]})
     {
+        this.validate(recipe);
+
         this.id = recipe.id
         this.title = recipe.title;
         this.description = recipe.description;
@@ -19,6 +21,26 @@ export class Recipe{
         this.portion_amount = recipe.portion_amount;
         this.ownerUsername = recipe.ownerUsername;
         this.ingredients = recipe.ingredients;
+
+    }
+
+
+    validate(recipe:{id?:number|undefined,title:string, description:string, instructions:string,portion_amount:number, ownerUsername: string , ingredients:Ingredient[]}) {
+        if (!recipe.title) {
+            throw new Error('Title is required');
+        }
+        if (!recipe.description) {
+            throw new Error('Description is required');
+        }
+        if (!recipe.instructions) {
+            throw new Error('Instructions are required');
+        }
+        if (!recipe.portion_amount) {
+            throw new Error('Portion amounts are required');
+        }
+        if (recipe.portion_amount < 1) {
+            throw new Error('Portion amounts should be more then 0');
+        }
 
     }
 
