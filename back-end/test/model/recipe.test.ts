@@ -21,7 +21,7 @@ const existingIngredient1 =
 new Ingredient({ id: 1, name: "Tomato", calories: 18, fats: 0.2, proteins: 0.9, carbohydrates: 3.9 })
 
 const existingIngredient2 = 
-new Ingredient({ id: 1, name: "Tomato", calories: 18, fats: 0.2, proteins: 0.9, carbohydrates: 3.9 })
+new Ingredient({ id: 2, name: "Celery", calories: 18, fats: 0.2, proteins: 0.9, carbohydrates: 3.9 })
 
 
 
