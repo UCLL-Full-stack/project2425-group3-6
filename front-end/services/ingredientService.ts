@@ -10,8 +10,8 @@ const getAllIngredients = async () => {
     return data;
   };
   
-  const getIngredientByName = async (userName :string) => {
-    const response = await fetch(`http://localhost:3000/ingredients/search/${userName}`);
+  const getIngredientByName = async (username :string) => {
+    const response = await fetch(`http://localhost:3000/ingredients/search/${username}`);
     if (!response.ok) {
         throw new Error('Failed to fetch lecturer');
     }

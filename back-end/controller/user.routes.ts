@@ -1,38 +1,74 @@
 /**
  * @swagger
  *   components:
- *    securitySchemes:
- *     bearerAuth:
- *      type: http
- *      scheme: bearer
- *      bearerFormat: JWT
  *    schemas:
+ *      AuthenticationResponse:
+ *          type: object
+ *          properties:
+ *            message:
+ *              type: string
+ *              description: Authentication response.
+ *            token:
+ *              type: string
+ *              description: JWT access token.
+ *            username:
+ *              type: string
+ *              description: User name.
+ *            fullname:
+ *             type: string
+ *             description: Full name.
+ *      AuthenticationRequest:
+ *          type: object
+ *          properties:
+ *            username:
+ *              type: string
+ *              description: User name.
+ *            password:
+ *              type: string
+ *              description: User password.
  *      User:
  *          type: object
  *          properties:
  *            id:
  *              type: number
  *              format: int64
- *            userName:
+ *            username:
  *              type: string
- *              description: User's username.
- *            firstName:
- *              type: string
- *              description: User's first name.
- *            lastName:
- *              type: string
- *              description: User's last name.
+ *              description: User name.
  *            password:
  *              type: string
- *              description: User's password.
+ *              description: User password.
+ *            firstName:
+ *              type: string
+ *              description: First name.
+ *            lastName:
+ *              type: string
+ *              description: Last name.
  *            email:
  *              type: string
- *              description: User's email address.
+ *              description: E-mail.
+ *      UserInput:
+ *          type: object
+ *          properties:
+ *            username:
+ *              type: string
+ *              description: User name.
+ *            password:
+ *              type: string
+ *              description: User password.
+ *            firstName:
+ *              type: string
+ *              description: First name.
+ *            lastName:
+ *              type: string
+ *              description: Last name.
+ *            email:
+ *              type: string
+ *              description: E-mail.
  */
-
-
 import express, { NextFunction, Request, Response } from 'express';
 import userService from '../service/user.service';
+import { UserInput } from '../types/index';
 
 const userRouter = express.Router();
 
@@ -40,98 +76,82 @@ const userRouter = express.Router();
  * @swagger
  * /users:
  *   get:
- *     summary: Get a list of all users.
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Get a list of all users
  *     responses:
  *       200:
- *         description: A JSON array of all users.
+ *         description: A list of users.
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/User'
- *       400:
- *         description: Error occurred while fetching users.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                 errorMessage:
- *                   type: string
- *     description: Returns a list of all available users in the system.
+ *                  $ref: '#/components/schemas/User'
  */
-userRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const users = await userService.getAllUsers();
-        res.status(200).json(users);
+userRouter.get(
+  '/',
+  async (req: Request, res: Response, next: NextFunction) => {
+      try {
+          const users = await userService.getAllUsers();
+          res.status(200).json(users);
       } catch (error) {
-        res.status(400).json({ status: 'error', errorMessage: (error as Error).message});
+          next(error);
       }
-});
+  }
+);
 
 /**
  * @swagger
- * /users/{id}:
- *   get:
- *     summary: Get a user by ID.
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: The ID of the user to retrieve.
+ * /users/login:
+ *   post:
+ *     summary: Authenticate a user and return a JWT token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/AuthenticationRequest'
  *     responses:
  *       200:
- *         description: A single user object.
+ *         description: Authentication successful.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: User not found or invalid ID supplied.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                 errorMessage:
- *                   type: string
- *     description: Returns a single user object by user ID.
+ *               $ref: '#/components/schemas/AuthenticationResponse'
+ *       401:
+ *         description: Authentication failed.
  */
-userRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const userId = parseInt(req.params.id, 10);
+userRouter.post(
+    '/login',
+    async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { username, password } = req.body;
 
-    if (isNaN(userId)) {
-      return res.status(400).json({ status: 'error', errorMessage: 'Invalid user ID format' });
+            if (!username || !password) {
+                return res.status(400).json({
+                    message: 'username and password are required.',
+                });
+            }
+
+            // Call the authenticate method in the service layer
+            const authResponse = await userService.authenticate(username, password);
+
+            res.status(200).json({
+                message: 'Authentication successful',
+                ...authResponse, // Includes token, username, fullname
+            });
+        } catch (error) {
+          console.error(error);
+        }
     }
-
-    const user = await userService.getUserById(userId);
-
-    if (!user) {
-      res.status(400).json({ status: 'error', errorMessage: 'User not found' });
-    } else {
-      res.status(200).json(user);
-    }
-  } catch (error) {
-    res.status(400).json({ status: 'error', errorMessage: (error as Error).message });
-  }
-});
-
-
+);
 
 /**
  * @swagger
- * /users:
+ * /users/signup:
  *   post:
- *     summary: Create a new user
- *     tags: [Users]
+ *     summary: Create a new user (signup)
  *     requestBody:
  *       required: true
  *       content:
@@ -140,97 +160,27 @@ userRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) =
  *             $ref: '#/components/schemas/UserInput'
  *     responses:
  *       201:
- *         description: The newly created user.
+ *         description: User created successfully.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/User'
  *       400:
- *         description: Bad request or validation error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: error
- *                 errorMessage:
- *                   type: string
+ *         description: Bad request (e.g., user already exists)
+ *       500:
+ *         description: Internal server error
  */
+userRouter.post('/signup', async (req: Request, res: Response) => {
+    try {
+        const { username, password, firstName, lastName, email} = req.body;
 
+        // Call the createUser function to create the user
+        const newUser = await userService.createUser({ username, password, firstName, lastName, email});
 
-userRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-      const {userName, firstName, lastName, password, email } = req.body;
-      const recipe = await userService.createNewUser({userName, firstName, lastName, password, email});
-      res.status(200).json(recipe);
+        res.status(201).json(newUser);  // Return the created user
     } catch (error) {
-      res.status(400).json({ status: 'error', errorMessage: (error as Error).message });
+        console.error(error);
     }
 });
-
-/**
- * @swagger
- * /users/check:
- *   post:
- *     summary: Check if a user exists by username and password.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               username:
- *                 type: string
- *                 description: The username of the user.
- *               password:
- *                 type: string
- *                 description: The password of the user.
- *             required:
- *               - username
- *               - password
- *     responses:
- *       200:
- *         description: User found.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: User not found or invalid credentials.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                 errorMessage:
- *                   type: string
- *     description: Checks if a user exists with the provided username and password.
- */
-userRouter.post('/check', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-      return res.status(400).json({ status: 'error', errorMessage: 'Username and password are required' });
-    }
-
-    // Replace with actual service call to check if user exists
-    const user = await userService.checkUserExist(username, password);
-
-    if (!user) {
-      res.status(400).json({ status: 'error', errorMessage: 'User not found or invalid credentials' });
-    } else {
-      res.status(200).json(user);
-    }
-  } catch (error) {
-    res.status(400).json({ status: 'error', errorMessage: (error as Error).message });
-  }
-});
-
 
 export { userRouter };

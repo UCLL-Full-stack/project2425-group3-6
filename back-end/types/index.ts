@@ -1,6 +1,6 @@
 type UserInput = {
     id?: number;
-    userName: string;
+    username: string;
     firstName: string;
     lastName: string;
     password: string;
@@ -15,7 +15,7 @@ type RecipeInput = {
     instructions: string;
     portion_amount : number;
     ownerUsername: string;
-    ingredients: IngredientInput[];
+    ingredients: IngredientRecipe[];
 };
 
 type IngredientInput = {
@@ -29,9 +29,25 @@ type IngredientInput = {
     unit?: string|undefined;
 };
 
+type AuthenticationResponse = {
+    token: string;
+    username: string;
+    fullname: string;
+};
+
+type IngredientRecipe = {
+    name: string;
+    amount: number;
+    unit: string;
+    recipeId: number;
+  };
+  
+
 
 export {
     UserInput,
     RecipeInput,
-    IngredientInput
+    IngredientInput,
+    AuthenticationResponse,
+    IngredientRecipe
 };

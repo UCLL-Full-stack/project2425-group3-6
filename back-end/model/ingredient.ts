@@ -1,4 +1,3 @@
-import { Recipe } from "./recipe";
 
 export class Ingredient{
     private id?: number|undefined;
@@ -10,7 +9,7 @@ export class Ingredient{
     private amount?: number|undefined;
     private unit?: string|undefined;
     
-    constructor(ingredient:{id?:number|undefined, name: string; calories: number, fats:number,proteins:number,carbohydrates: number , amount?: number|undefined, unit?: string|undefined})
+    constructor(ingredient:{id?:number|undefined, name: string; calories: number, fats:number,proteins:number,carbohydrates: number , amount?: number|undefined, unit?: string})
     {
         this.id = ingredient.id
         this.name = ingredient.name
@@ -47,11 +46,25 @@ export class Ingredient{
     getUnit(): string|undefined{
         return this.unit
     }
+
     setAmount(amount: number): void {
         this.amount = amount;
     }
     setUnit(unit: string): void {
         this.unit = unit;
     }
+
+    static from({ id, name, calories, fats, proteins, carbohydrates, amount, unit}: any): Ingredient {
+        return new Ingredient({
+            id,
+            name,
+            calories,
+            fats,
+            proteins,
+            carbohydrates,
+            amount,
+            unit,
+        });
+      }
 
 }

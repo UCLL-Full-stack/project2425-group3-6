@@ -74,7 +74,7 @@
  *          properties:
  *            id:
  *              type: number
- *            userName:
+ *            username:
  *              type: string
  *            firstName:
  *              type: string
@@ -84,7 +84,7 @@
  *              type: string
  *          required:
  *            - id
- *            - userName
+ *            - username
  *            - firstName
  *            - lastName
  *            - email
@@ -92,7 +92,7 @@
  *      UserInput:
  *          type: object
  *          properties:
- *            userName:
+ *            username:
  *              type: string
  *            firstName:
  *              type: string
@@ -101,7 +101,7 @@
  *            email:
  *              type: string
  *          required:
- *            - userName
+ *            - username
  *            - firstName
  *            - lastName
  *            - email
@@ -319,7 +319,7 @@ recipeRouter.get('/user/:username', async (req: Request, res: Response, next: Ne
 recipeRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params; // Haal het ID op uit de URL-parameters
   try {
-      const deletedRecipe = await recipeService.deletRecipeById(Number(id)); // Verwijder het recept met het opgegeven ID
+      const deletedRecipe = await recipeService.deleteRecipeById(Number(id)); // Verwijder het recept met het opgegeven ID
       if (deletedRecipe) {
           res.status(204).send(); // Stuur een 204 No Content als het recept succesvol is verwijderd
       } else {

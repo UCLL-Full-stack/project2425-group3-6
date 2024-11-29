@@ -1,43 +1,37 @@
-import { Ingredient } from "../model/ingredient";
 import { Recipe } from "../model/recipe";
 import recipeDb from "../repository/recipe.db";
 import userDb from "../repository/user.db";
-import { IngredientInput, RecipeInput } from "../types";
-import ingredientService from "./ingredient.service";
+import { RecipeInput } from "../types";
 
-
-const getAllRecipes = (): Recipe[] => {
-    return recipeDb.getAllRecipes() ;
+const getAllRecipes = (): Promise<Recipe[]> => {
+    return recipeDb.getAllRecipes();
 };
 
-const getRecipeById = (id:number): Recipe =>{
-    const recipe = recipeDb.getRecipeById({id})
-    if(recipe)
-        return recipe
-    else if(recipe == null){
-        throw new Error(`Recipe with id ${id} does not exist.`)
-    }
-    else{throw new Error(`Error encountered in the backend.`)}
+const getRecipeById = async (id: number): Promise<Recipe> => {
+    const recipe = await recipeDb.getRecipeById({ id });
+    if(!recipe){
+        throw new Error(`recipe with id ${id} does not exist.`)
+    }  
+    return recipe
 };
 
-const deletRecipeById = (id:number): Recipe =>{
-    const recipe = recipeDb.deletRecipeById({id})
-    if(recipe)
-        return recipe
-    else if(recipe == null){
-        throw new Error(`Recipe with id ${id} does not exist.`)
+const deleteRecipeById = (id: number): string => {
+    const recipe = recipeDb.deletRecipeById({ id });
+    if (!recipe) {
+        throw new Error(`Recipe with id ${id} does not exist.`);
     }
-    else{throw new Error(`Error encountered in the backend.`)}
+    return `Recipe with id ${id} has been deleted.`;
 };
 
-const getRecipeByUser = (userName: string): Recipe[] =>{
-    const recipe = recipeDb.getRecipeByUser({userName})
-    if(recipe)
-        return recipe
-    else if(recipe == null){
-        throw new Error(`Recipe with user does not exist.`)
+const getRecipeByUser = async (username: string): Promise<Recipe[]> => {
+    const recipes = await recipeDb.getRecipeByUser({ username });
+    
+    // Check if the returned recipes are null or empty, and handle accordingly
+    if (!recipes) {
+        throw new Error(`No recipes found for user ${username}.`);
     }
-    else{throw new Error(`Error encountered in the backend.`)}
+    
+    return recipes; // If recipes exist, return them
 };
 
 const createRecipe = async ({
@@ -48,32 +42,30 @@ const createRecipe = async ({
     ownerUsername,
     ingredients
 }: RecipeInput): Promise<Recipe> => {
-    const ingredientsRecipe: Ingredient[] = []; 
+    // Fetch the owner to check if the user exists
+    const owner = await userDb.getUserByUsername({ username: ownerUsername });
+    if (!owner) {
+        throw new Error(`User with username ${ownerUsername} does not exist.`);
+    }
 
-    const ingredientPromises = ingredients.map(async (ingredient) => {
-        if (ingredient.id) { 
-            const ingredientData = await ingredientService.getIngredientById(ingredient.id);
-            if(ingredient.amount && ingredient.unit){
-                ingredientData.setAmount(ingredient.amount)
-                ingredientData.setUnit(ingredient.unit)
-            }
-            ingredientsRecipe.push(ingredientData);
-        }
-    });
 
-    await Promise.all(ingredientPromises);
-    const id = recipeDb.getAllRecipes().length + 1
-
-    return recipeDb.createRecipe({
-        id,
+    // Create the recipe with the prepared ingredients
+    const recipe = await recipeDb.createRecipe({
         title,
         description,
         instructions,
         portion_amount,
         ownerUsername,
-        ingredients: ingredientsRecipe
+        ingredients, // Use the populated ingredients
     });
 
+    return recipe;
 };
 
-export default { getAllRecipes, getRecipeById, createRecipe, getRecipeByUser, deletRecipeById};
+export default {
+    getAllRecipes,
+    getRecipeById,
+    createRecipe,
+    getRecipeByUser,
+    deleteRecipeById
+};

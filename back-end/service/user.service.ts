@@ -1,14 +1,12 @@
-import { Recipe } from "../model/recipe";
 import { User } from "../model/user";
 import userDb from "../repository/user.db";
-import { UserInput } from "../types";
+import { AuthenticationResponse, UserInput } from "../types";
+import { generateJwtToken } from "../util/jwt";
 
-const getAllUsers = (): User[] => {
-    return userDb.getAllUsers() ;
-};
+const getAllUsers = async (): Promise<User[]> => userDb.getAllUsers();
 
-const getUserById = (id:number): User =>{
-    const user = userDb.getUserById({id})
+const getUserById = async (id:number): Promise<User> =>{
+    const user = await userDb.getUserById({id})
     if(user)
         return user
     else if(user == null){
@@ -17,56 +15,62 @@ const getUserById = (id:number): User =>{
     else{throw new Error(`Error encountered in the backend.`)}
 };
 
-const checkUserExist = (username : string, password : string): User =>{
-    const user = userDb.getUserByUsername({username})
-    if(user && password == user.getPassword())
-        return user
-    else if(user == null){
-        throw new Error(`User does not exist.`)
+const getUserByUsername = async ({ username }: { username: string }): Promise<User> => {
+    const user = await userDb.getUserByUsername({ username });
+    if (!user) {
+        throw new Error(`User with username: ${username} does not exist.`);
     }
-    else if(password != user.getPassword()){
-        throw new Error(`Wrong Password`)
-    }
-    else{throw new Error(`Error encountered in the backend.`)}
+    return user;
 };
 
-
-
-//TBD
-const addRecipeToUser = (userId:number, recipe:Recipe) => {
-    const user = userDb.addRecipeToUser(userId, recipe)
-    if(user)
-        return user
-    else if(user == null){
-        throw new Error(`User with id ${userId} does not exist.`)
+export const createUser = async (userInput: UserInput): Promise<User> => {
+    const existingUser = await userDb.getUserByUsername({ username: userInput.username });
+  
+    if (existingUser) {
+        throw new Error('User already exists');
     }
-    else{throw new Error(`Error encountered in the backend.`)}
-}
+  
+    const newUser = {
+        username: userInput.username,
+        password: userInput.password,
+        firstName: userInput.firstName,
+        lastName: userInput.lastName,
+        email: userInput.email,
+    };
+  
+    // 4. Save the new user to the database
+    return await userDb.createUser(newUser);
+  };
+  
+  
+  
+  export const authenticate = async (username: string, password: string): Promise<AuthenticationResponse> => {
+    const user = await userDb.getUserByUsername({ username });
+    console.log(user)
+  
+    if (!user) {
+        throw new Error('Invalid credentials');
+    }
+  
+    // 2. Verify the password
+    const isPasswordCorrect = await user.verifyPassword(password); // Use verifyPassword method
+  
+    if (!isPasswordCorrect) {
+        throw new Error('Invalid credentials');
+    }
+  
+    // 3. Generate JWT token
+    const token = generateJwtToken({ username: user.getUserName()});
+  
+    // 4. Return the user info and token
+    return {
+        username: user.getUserName(),
+        fullname: `${user.getFirstName()} ${user.getLastName()}`,
+        token,
+    };
+  };
 
-const createNewUser = ({userName, firstName, lastName, password, email}: UserInput): User => {
-
-    const newUser = new User({
-        userName,
-        firstName,
-        lastName,
-        password,
-        email
-    });
-
-    const createdUser = userDb.createUser({
-        userName: newUser.getUserName(),
-        firstName : newUser.getFirstName(),
-        lastName: newUser.getLastName(),
-        password : newUser.getPassword(),
-        email: newUser.getEmail(),
-
-    });
-
-
-    return createdUser;
-};
 
 
 
-
-export default { getAllUsers, getUserById, addRecipeToUser, createNewUser, checkUserExist};
+export default { getAllUsers, getUserById, getUserByUsername, authenticate, createUser};

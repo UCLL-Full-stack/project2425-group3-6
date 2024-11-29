@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Ingredient, Recipe } from "@types";
+import { Ingredient, IngredientRecipe, Recipe } from "@types";
 import Modal from 'react-modal';
 import RecipeService from "@services/recipeService";
 import { useRouter } from "next/router";
@@ -7,10 +7,10 @@ import userService from "@services/userService";
 import IngredientService from "@services/ingredientService";
 
 interface RecipeOvervieuwProps {
-    userName: string; // Definieer de prop
+    username: string; // Definieer de prop
   }
 
-const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
+const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
     const [recepis, setRecepis] = useState<Recipe[]>([]);
     const [ingredients, setIngredients] = useState<Ingredient[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,34 +19,34 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
     const [instructions, setInstructions] = useState('');
     const [portionAmount, setPortionAmount] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
-    const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
+    const [selectedIngredients, setSelectedIngredients] = useState<IngredientRecipe[]>([]);
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
     const [ingredientAmount, setIngredienAmount] = useState(0);
     const [ingredientType, setIngredienType] = useState("g");
+
     
     const filteredIngredients = ingredients
     .filter(ingredient => 
         ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
 
-
-
     useEffect(() => {
         const fetchDataProjects = async () => {
-            console.log(userName)
+            console.log(username)
             try {
-                const data = await RecipeService.getRecipeByUser(userName);
+                const data = await RecipeService.getRecipeByUser(username);
                 setRecepis(data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         };
         const fetchDataIngredients = async () => {
-            console.log(userName)
+            console.log(username)
             try {
                 const data = await IngredientService.getAllIngredients();
                 setIngredients(data);
+                console.log(data)
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -104,7 +104,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
               description,
               instructions,
               portion_amount: portionAmount,
-              ownerUsername: userName,
+              ownerUsername: username,
               ingredients: selectedIngredients
           });
           if(recipe){
@@ -115,23 +115,28 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
         }
       };
 
-      const addIngredient = (ingredient: Ingredient, amount: number, unit: string) => {
-        ingredient.amount = amount;
-        ingredient.unit = unit;
+      const addIngredient = (name: string, ingredientId: number | undefined, amount: number, unit: string) => {
+        const newIngredient: IngredientRecipe = {
+            name,
+            ingredientId, // Assuming the ingredientId is the same as the id
+            amount,
+            unit,
+        };
         setSelectedIngredients((prevSelected) => {
-            if (!prevSelected.find((i) => i.id === ingredient.id)) {
-                console.log([...prevSelected, ingredient])
-                return [...prevSelected, ingredient];
+            if (!prevSelected.find((i) => i.ingredientId === newIngredient.ingredientId)) {
+                console.log([...prevSelected, newIngredient])
+                return [...prevSelected, newIngredient];
             }
             return prevSelected;
         });
         setIngredienType("g");
         
+        
     };
 
-    const removeIngredient = (ingredient: Ingredient) => {
+    const removeIngredient = (ingredientId: number | undefined) => {
         setSelectedIngredients((prevSelected) => 
-            prevSelected.filter((i) => i.id !== ingredient.id)
+            prevSelected.filter((i) => i.ingredientId !== ingredientId)
         );
     };
 
@@ -237,19 +242,19 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
                                                     <p className="text-black">{ingredient.name}</p>
                                                 </div>
                                                 <div>
-                                                    {selectedIngredients.includes(ingredient) ? (
-                                                        <div className="flex">
-                                                            <div className=" bg-[#2b8f0a] p-2 rounded text-white mr-2">
-                                                                {ingredient.amount} {ingredient.unit}
-                                                            </div>
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => removeIngredient(ingredient)}
-                                                                className="p-2 rounded bg-[#2b8f0a] text-white"
-                                                            >
-                                                                Remove
-                                                            </button>
+                                                {selectedIngredients.some(i => i.name === ingredient.name) ? (
+                                                    <div className="flex">
+                                                        <div className="bg-[#2b8f0a] p-2 rounded text-white mr-2">
+                                                            {ingredient.amount} {ingredient.unit}
                                                         </div>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => removeIngredient(ingredient.id)}
+                                                            className="p-2 rounded bg-[#2b8f0a] text-white"
+                                                        >
+                                                            Remove
+                                                        </button>
+                                                    </div>
                                                    
                                                     ) : (
                                                         <div className="flex" >
@@ -270,11 +275,11 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
                                                                     <option value="el">el</option>
                                                                     <option value="cup">cup</option>
                                                                 </select>
-                                                                <button
+                                                                <button 
                                                                     type="button"
                                                                     onClick={() => {
                                                                         if (ingredientAmount && ingredientType) {
-                                                                            addIngredient(ingredient, ingredientAmount, ingredientType);
+                                                                            addIngredient( ingredient.name, ingredient.id,ingredientAmount, ingredientType);
                                                                         }
                                                                     }}
                                                                     className="p-2 rounded bg-[#ff5781] text-white"
@@ -291,11 +296,11 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ userName }) => {
                                     <label className="block mt-2  font-medium mb-1">Selected Ingredients</label>
                                         <div className="flex flex-wrap gap-1">
                                             {selectedIngredients.map((ingredient) => (
-                                                <div key={ingredient.id} className="bg-gray-100 rounded-md mb-2 p-2">
+                                                <div key={ingredient.ingredientId} className="bg-gray-100 rounded-md mb-2 p-2">
                                                     <div className="flex">
                                                         <p className="text-black">{ingredient.name}</p>
                                                         <button className="ml-4" 
-                                                            onClick={() => removeIngredient(ingredient)}>
+                                                            onClick={() => removeIngredient(ingredient.ingredientId)}>
                                                             <img src="./cross.svg" alt="Add Recipe" height={10} width={10} />
                                                         </button>
                                                     </div>

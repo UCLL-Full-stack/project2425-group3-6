@@ -1,120 +1,44 @@
 import { Ingredient } from "../model/ingredient";
+import database from "../util/database";
 
-const ingredients = [
-    new Ingredient({ id: 1, name: "Tomato", calories: 18, fats: 0.2, proteins: 0.9, carbohydrates: 3.9 }),
-    new Ingredient({ id: 2, name: "Potato", calories: 77, fats: 0.1, proteins: 2, carbohydrates: 17 }),
-    new Ingredient({ id: 3, name: "Chicken Breast", calories: 165, fats: 3.6, proteins: 31, carbohydrates: 0 }),
-    new Ingredient({ id: 4, name: "Beef", calories: 250, fats: 15, proteins: 26, carbohydrates: 0 }),
-    new Ingredient({ id: 5, name: "Carrot", calories: 41, fats: 0.2, proteins: 0.9, carbohydrates: 10 }),
-    new Ingredient({ id: 6, name: "Onion", calories: 40, fats: 0.1, proteins: 1.1, carbohydrates: 9.3 }),
-    new Ingredient({ id: 7, name: "Garlic", calories: 149, fats: 0.5, proteins: 6.4, carbohydrates: 33 }),
-    new Ingredient({ id: 8, name: "Broccoli", calories: 55, fats: 0.6, proteins: 3.7, carbohydrates: 11 }),
-    new Ingredient({ id: 9, name: "Cheese", calories: 402, fats: 33, proteins: 25, carbohydrates: 1.3 }),
-    new Ingredient({ id: 10, name: "Rice", calories: 130, fats: 0.3, proteins: 2.7, carbohydrates: 28 }),
-    new Ingredient({ id: 11, name: "Pasta", calories: 157, fats: 0.9, proteins: 5.8, carbohydrates: 31 }),
-    new Ingredient({ id: 12, name: "Egg", calories: 155, fats: 11, proteins: 13, carbohydrates: 1.1 }),
-    new Ingredient({ id: 13, name: "Fish", calories: 206, fats: 13, proteins: 22, carbohydrates: 0 }),
-    new Ingredient({ id: 14, name: "Apple", calories: 52, fats: 0.2, proteins: 0.3, carbohydrates: 14 }),
-    new Ingredient({ id: 15, name: "Banana", calories: 89, fats: 0.3, proteins: 1.1, carbohydrates: 23 }),
-    new Ingredient({ id: 16, name: "Orange", calories: 47, fats: 0.1, proteins: 0.9, carbohydrates: 12 }),
-    new Ingredient({ id: 17, name: "Strawberry", calories: 32, fats: 0.3, proteins: 0.7, carbohydrates: 7.7 }),
-    new Ingredient({ id: 18, name: "Blueberry", calories: 57, fats: 0.3, proteins: 0.7, carbohydrates: 14 }),
-    new Ingredient({ id: 19, name: "Spinach", calories: 23, fats: 0.4, proteins: 2.9, carbohydrates: 3.6 }),
-    new Ingredient({ id: 20, name: "Lettuce", calories: 15, fats: 0.2, proteins: 1.4, carbohydrates: 2.9 }),
-    new Ingredient({ id: 21, name: "Cucumber", calories: 16, fats: 0.1, proteins: 0.7, carbohydrates: 3.6 }),
-    new Ingredient({ id: 22, name: "Bell Pepper", calories: 20, fats: 0.2, proteins: 1, carbohydrates: 4.7 }),
-    new Ingredient({ id: 23, name: "Zucchini", calories: 17, fats: 0.3, proteins: 1.2, carbohydrates: 3.1 }),
-    new Ingredient({ id: 24, name: "Cabbage", calories: 25, fats: 0.1, proteins: 1.3, carbohydrates: 5.8 }),
-    new Ingredient({ id: 25, name: "Cauliflower", calories: 25, fats: 0.3, proteins: 1.9, carbohydrates: 5 }),
-    new Ingredient({ id: 26, name: "Peas", calories: 81, fats: 0.4, proteins: 5.4, carbohydrates: 14 }),
-    new Ingredient({ id: 27, name: "Corn", calories: 86, fats: 1.2, proteins: 3.2, carbohydrates: 19 }),
-    new Ingredient({ id: 28, name: "Mushrooms", calories: 22, fats: 0.3, proteins: 3.1, carbohydrates: 3.3 }),
-    new Ingredient({ id: 29, name: "Eggplant", calories: 25, fats: 0.2, proteins: 1, carbohydrates: 5.9 }),
-    new Ingredient({ id: 30, name: "Pumpkin", calories: 26, fats: 0.1, proteins: 1, carbohydrates: 7 }),
-    new Ingredient({ id: 31, name: "Almonds", calories: 576, fats: 50, proteins: 21, carbohydrates: 22 }),
-    new Ingredient({ id: 32, name: "Walnuts", calories: 654, fats: 65, proteins: 15, carbohydrates: 14 }),
-    new Ingredient({ id: 33, name: "Peanuts", calories: 567, fats: 49, proteins: 26, carbohydrates: 16 }),
-    new Ingredient({ id: 34, name: "Chia Seeds", calories: 486, fats: 31, proteins: 17, carbohydrates: 42 }),
-    new Ingredient({ id: 35, name: "Flaxseeds", calories: 534, fats: 42, proteins: 18, carbohydrates: 29 }),
-    new Ingredient({ id: 36, name: "Quinoa", calories: 120, fats: 1.9, proteins: 4.1, carbohydrates: 21 }),
-    new Ingredient({ id: 37, name: "Barley", calories: 352, fats: 1.2, proteins: 12, carbohydrates: 73 }),
-    new Ingredient({ id: 38, name: "Oats", calories: 389, fats: 6.9, proteins: 16.9, carbohydrates: 66 }),
-    new Ingredient({ id: 39, name: "Honey", calories: 304, fats: 0, proteins: 0.3, carbohydrates: 82 }),
-    new Ingredient({ id: 40, name: "Brown Sugar", calories: 380, fats: 0, proteins: 0, carbohydrates: 100 }),
-    new Ingredient({ id: 41, name: "Maple Syrup", calories: 261, fats: 0, proteins: 0, carbohydrates: 67 }),
-    new Ingredient({ id: 42, name: "Soy Sauce", calories: 53, fats: 0.1, proteins: 8.2, carbohydrates: 4.5 }),
-    new Ingredient({ id: 43, name: "Olive Oil", calories: 884, fats: 100, proteins: 0, carbohydrates: 0 }),
-    new Ingredient({ id: 44, name: "Coconut Oil", calories: 892, fats: 100, proteins: 0, carbohydrates: 0 }),
-    new Ingredient({ id: 45, name: "Butter", calories: 717, fats: 81, proteins: 1, carbohydrates: 0.1 }),
-    new Ingredient({ id: 46, name: "Cream", calories: 340, fats: 36, proteins: 2.1, carbohydrates: 3.1 }),
-    new Ingredient({ id: 47, name: "Yogurt", calories: 59, fats: 3.3, proteins: 10, carbohydrates: 3.6 }),
-    new Ingredient({ id: 48, name: "Milk", calories: 42, fats: 1, proteins: 3.4, carbohydrates: 5 }),
-    new Ingredient({ id: 49, name: "Tofu", calories: 76, fats: 4.8, proteins: 8, carbohydrates: 1.9 }),
-    new Ingredient({ id: 50, name: "Coconut Milk", calories: 230, fats: 24, proteins: 2.3, carbohydrates: 6.9 }),
-    new Ingredient({ id: 51, name: "Sour Cream", calories: 193, fats: 19, proteins: 3.5, carbohydrates: 4.6 }),
-    new Ingredient({ id: 52, name: "Salsa", calories: 36, fats: 0.2, proteins: 1.3, carbohydrates: 8 }),
-    new Ingredient({ id: 53, name: "Ketchup", calories: 100, fats: 0.1, proteins: 1, carbohydrates: 26 }),
-    new Ingredient({ id: 54, name: "Mustard", calories: 66, fats: 4.3, proteins: 3.5, carbohydrates: 5 }),
-    new Ingredient({ id: 55, name: "Mayonnaise", calories: 680, fats: 75, proteins: 1, carbohydrates: 0.6 }),
-    new Ingredient({ id: 56, name: "Vinegar", calories: 14, fats: 0, proteins: 0, carbohydrates: 0.1 }),
-    new Ingredient({ id: 57, name: "Balsamic Vinegar", calories: 88, fats: 0, proteins: 0, carbohydrates: 17 }),
-    new Ingredient({ id: 58, name: "Pesto", calories: 431, fats: 43, proteins: 7, carbohydrates: 4.4 }),
-    new Ingredient({ id: 59, name: "Chili Powder", calories: 282, fats: 13.9, proteins: 24.3, carbohydrates: 54.2 }),
-    new Ingredient({ id: 60, name: "Cinnamon", calories: 247, fats: 1.2, proteins: 4, carbohydrates: 81 }),
-    new Ingredient({ id: 61, name: "Nutmeg", calories: 525, fats: 36.3, proteins: 5.8, carbohydrates: 49.3 }),
-    new Ingredient({ id: 62, name: "Cumin", calories: 375, fats: 22.3, proteins: 18, carbohydrates: 44.2 }),
-    new Ingredient({ id: 63, name: "Paprika", calories: 282, fats: 13.2, proteins: 14, carbohydrates: 54.3 }),
-    new Ingredient({ id: 64, name: "Black Pepper", calories: 255, fats: 3.3, proteins: 10.4, carbohydrates: 64.3 }),
-    new Ingredient({ id: 65, name: "Salt", calories: 0, fats: 0, proteins: 0, carbohydrates: 0 }),
-    new Ingredient({ id: 66, name: "Sugar", calories: 387, fats: 0, proteins: 0, carbohydrates: 100 }),
-    new Ingredient({ id: 67, name: "Brown Rice", calories: 111, fats: 0.9, proteins: 2.6, carbohydrates: 23 }),
-    new Ingredient({ id: 68, name: "Jasmine Rice", calories: 130, fats: 0.3, proteins: 2.7, carbohydrates: 28 }),
-    new Ingredient({ id: 69, name: "Couscous", calories: 112, fats: 0.2, proteins: 3.8, carbohydrates: 23 }),
-    new Ingredient({ id: 70, name: "Pita Bread", calories: 275, fats: 1.5, proteins: 9, carbohydrates: 55 }),
-    new Ingredient({ id: 71, name: "Whole Wheat Bread", calories: 247, fats: 4.2, proteins: 13, carbohydrates: 41 }),
-    new Ingredient({ id: 72, name: "Tortilla", calories: 218, fats: 6.2, proteins: 6.7, carbohydrates: 34 }),
-    new Ingredient({ id: 73, name: "Bagel", calories: 250, fats: 1, proteins: 9, carbohydrates: 48 }),
-    new Ingredient({ id: 74, name: "Crackers", calories: 418, fats: 17, proteins: 7, carbohydrates: 64 }),
-    new Ingredient({ id: 75, name: "Granola", calories: 471, fats: 20, proteins: 10, carbohydrates: 60 }),
-    new Ingredient({ id: 76, name: "Cereal", calories: 375, fats: 5, proteins: 8, carbohydrates: 80 }),
-    new Ingredient({ id: 77, name: "Bread Crumbs", calories: 368, fats: 2.4, proteins: 10, carbohydrates: 76 }),
-    new Ingredient({ id: 78, name: "Pudding", calories: 143, fats: 2.4, proteins: 3.8, carbohydrates: 26 }),
-    new Ingredient({ id: 79, name: "Ice Cream", calories: 207, fats: 11, proteins: 3.5, carbohydrates: 24 }),
-    new Ingredient({ id: 80, name: "Chocolate", calories: 546, fats: 31, proteins: 7.6, carbohydrates: 61 }),
-    new Ingredient({ id: 81, name: "Margarine", calories: 717, fats: 80, proteins: 1, carbohydrates: 0 }),
-    new Ingredient({ id: 82, name: "Coffee", calories: 2, fats: 0, proteins: 0, carbohydrates: 0.4 }),
-    new Ingredient({ id: 83, name: "Tea", calories: 1, fats: 0, proteins: 0, carbohydrates: 0.3 }),
-    new Ingredient({ id: 84, name: "Coconut", calories: 354, fats: 33, proteins: 3.3, carbohydrates: 15.2 }),
-    new Ingredient({ id: 85, name: "Chickpeas", calories: 164, fats: 2.6, proteins: 8.9, carbohydrates: 27 }),
-    new Ingredient({ id: 86, name: "Lentils", calories: 116, fats: 0.4, proteins: 9, carbohydrates: 20 }),
-    new Ingredient({ id: 87, name: "Kidney Beans", calories: 127, fats: 0.5, proteins: 8.7, carbohydrates: 22.8 }),
-    new Ingredient({ id: 88, name: "Black Beans", calories: 132, fats: 0.5, proteins: 8.9, carbohydrates: 23.7 }),
-    new Ingredient({ id: 89, name: "Basil", calories: 23, fats: 0.6, proteins: 3.2, carbohydrates: 2.7 }),
-    new Ingredient({ id: 90, name: "Parsley", calories: 36, fats: 0.8, proteins: 3, carbohydrates: 6.3 }),
-    new Ingredient({ id: 91, name: "Oregano", calories: 265, fats: 4.3, proteins: 9, carbohydrates: 68 }),
-    new Ingredient({ id: 92, name: "Thyme", calories: 101, fats: 1.7, proteins: 5.7, carbohydrates: 24 }),
-    new Ingredient({ id: 93, name: "Rosemary", calories: 131, fats: 5.9, proteins: 3.3, carbohydrates: 20 }),
-    new Ingredient({ id: 94, name: "Dill", calories: 43, fats: 1.1, proteins: 3.5, carbohydrates: 7 }),
-    new Ingredient({ id: 95, name: "Cilantro", calories: 23, fats: 0.5, proteins: 2.1, carbohydrates: 3.7 }),
-    new Ingredient({ id: 96, name: "Mint", calories: 70, fats: 0.9, proteins: 3.8, carbohydrates: 14 }),
-    new Ingredient({ id: 97, name: "Sesame Seeds", calories: 573, fats: 49, proteins: 17, carbohydrates: 23 }),
-    new Ingredient({ id: 98, name: "Sunflower Seeds", calories: 584, fats: 51, proteins: 21, carbohydrates: 20 }),
-    new Ingredient({ id: 99, name: "Pumpkin Seeds", calories: 559, fats: 49, proteins: 30, carbohydrates: 10 }),
-    new Ingredient({ id: 100, name: "Pea Protein", calories: 387, fats: 7.5, proteins: 80, carbohydrates: 9 }),
-];
 
-const getAllIngredients = (): Ingredient[] => {
-    return ingredients;
+const getAllIngredients = async (): Promise<Ingredient[]> => {
+    try {
+        const ingredientPrisma = await database.ingredient.findMany();
+        return ingredientPrisma.map((ingredientPrisma: any) => Ingredient.from(ingredientPrisma));
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
+    }
 };
 
-const getIngredientById = ({ id }: { id: number }): Ingredient | null => {
-    const ingredient = ingredients.find(ingredient => ingredient.getId() === id);
-    return ingredient || null;
+const getIngredientById = async ({ id }: { id: number }): Promise<Ingredient | null> => {
+    try {
+        const ingredientPrisma = await database.user.findUnique({
+            where: { id },
+        });
+
+        return ingredientPrisma ? Ingredient.from(ingredientPrisma) : null;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
+    }
 };
 
-const searchIngredients = (query: string): Ingredient[] => {
-    const lowerCaseQuery = query.toLowerCase();
-    return ingredients.filter(ingredient => ingredient.getName().toLowerCase().includes(lowerCaseQuery));
+const searchIngredients = async (query: string): Promise<Ingredient[]> => {
+    try {
+        const lowerCaseQuery = query.toLowerCase();
+
+        const allIngredients = await database.ingredient.findMany();
+
+        return allIngredients.filter((ingredient: any) =>
+            ingredient.name.toLowerCase().includes(lowerCaseQuery)  // Assuming 'name' is the field you're searching by
+        ).map((ingredient: any) => Ingredient.from(ingredient));
+
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
+    }
 };
 
 export default {

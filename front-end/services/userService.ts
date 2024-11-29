@@ -21,7 +21,7 @@ const getUserById = async (id :string) => {
 };
 
 const addUser = async (user : User) => {
-  return await fetch(`http://localhost:3000/users`, {
+  return await fetch(`http://localhost:3000/users/signup`, {
       method: "POST",
       headers: {
           "Content-Type": "application/json",
@@ -31,7 +31,7 @@ const addUser = async (user : User) => {
 };
 
 const checkUserExist = async (username: string, password: string) => {
-  const response = await fetch(`http://localhost:3000/users/check`, {
+  const response = await fetch(`http://localhost:3000/users/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

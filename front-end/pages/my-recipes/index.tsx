@@ -6,9 +6,9 @@ import Overview from '@components/overvieuw';
 
 const getUserName = () => {
   if (typeof window !== 'undefined') {
-    const userName = sessionStorage.getItem('userName');
-    if (userName) {
-      return userName;
+    const username = sessionStorage.getItem('username');
+    if (username) {
+      return username;
     }
   }
   return '';
@@ -29,7 +29,7 @@ const myRecepies: React.FC = () => {
           </style>
           <div className='bg-gradient-to-br from-[#2b8f0a] to-[#8cb57f] h-[100vh] w-screen relative'>
             <h1 className='text-7xl text-white titletext2 text-center pt-10'>My Recipes</h1>
-            <Overview userName={getUserName()}></Overview>
+            <Overview username={getUserName()}></Overview>
           </div>
         </main>
       

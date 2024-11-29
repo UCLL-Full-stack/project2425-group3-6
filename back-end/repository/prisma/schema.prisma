@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  firstName String
+  lastName  String
+  password  String
+  email     String    @unique
+  recipes   Recipe[] 
+  
+  @@map("User")
+}
+
+model Recipe {
+  id              Int           @id @default(autoincrement())
+  title           String
+  description     String
+  instructions    String
+  portion_amount  Int
+  owner           User         @relation(fields: [ownerUsername], references: [username])
+  ownerUsername   String
+  ingredients     IngredientRecipeType[] 
+
+  @@map("Recipe")
+}
+
+model Ingredient {
+  id             Int                  @id @default(autoincrement())
+  name           String               @unique
+  calories       Int
+  fats           Int
+  carbohydrates  Int
+  amount         Int
+  unit           String
+
+  @@map("Ingredient")
+}
+
+model Measureunit {
+  id      Int       @id @default(autoincrement())
+  name    String
+  size    Int
+
+  @@map("Measureunit")
+}
+
+model IngredientRecipeType{
+  id         Int       @id @default(autoincrement())
+  name       String
+  amount     Int
+  unit       String
+  recipeId   Int
+  recipe     Recipe         @relation(fields: [recipeId], references: [id])
+
+  @@map("IngredientRecipe")
+}

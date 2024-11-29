@@ -1,97 +1,97 @@
-import { Ingredient } from "../model/ingredient";
-import { Recipe } from "../model/recipe"
-import { User } from "../model/user";
+import { Recipe } from "../model/recipe";
+import { IngredientRecipe } from "../types";
+import database from "../util/database";
 import userDb from "./user.db";
 
-const recipes = [
-    new Recipe({
-        id: 1,
-        title: "Cheesecake",
-        description: "A cake made with cheese",
-        instructions: "Create the cake",
-        portion_amount: 1,
-        ownerUsername: "janedoe"
-        ,ingredients: []
-    }),
-    new Recipe({
-        id: 2,
-        title: "Tomato soup",
-        description: "A soup made with tomato",
-        instructions: "Create the soup",
-        portion_amount: 6,
-        ownerUsername: "janedoe"
-        ,ingredients:[]
-    }),
-]
-
-
-const getAllRecipes = (): Recipe[] => {
-    return recipes;
+const getAllRecipes = async (): Promise<Recipe[]> => {
+  const recipeprisma = await database.recipe.findMany();
+  return recipeprisma.map((recipeprisma: any) => Recipe.from(recipeprisma));
 };
 
-const getRecipeById = ({ id }: { id: number }): Recipe|null => {
-    const recipe = recipes.find(recipe => recipe.getId() === id);
-    if (recipe){
-        return recipe
-    }
-    else return null
+const getRecipeById = async ({ id }: { id: number }): Promise<Recipe | null> => {
+  const recipeprisma = await database.recipe.findUnique({
+    where: { id },
+  });
+  return recipeprisma ? Recipe.from(recipeprisma) : null;
 };
 
-const deletRecipeById = ({ id }: { id: number }): Recipe|null => {
-    const index = recipes.findIndex(recipe => recipe.getId() === id);
+const deletRecipeById = async ({ id }: { id: number }): Promise<String | null> => {
+  const recipeprisma = await database.recipe.findUnique({
+    where: { id },
+  });
 
-    if (index !== -1) {
-        const [deletedRecipe] = recipes.splice(index, 1);
-        return deletedRecipe;
-    }
-    else return null
+  if (!recipeprisma) {
+    return null;
+  }
+
+  await database.recipe.delete({
+    where: { id },
+  });
+
+  return "recipe deleted";
 };
 
-const getRecipeByUser = ({ userName }: { userName: string }): Recipe[] | null => {
+const getRecipeByUser = async ({ username }: { username: string }): Promise<Recipe[] | null> => {
+  const recipeprisma = await database.recipe.findMany({
+    where: { ownerUsername: username },
+  });
 
-    const userRecipes = recipes.filter(recipe => recipe.getOwnerUsername() === userName);
-    
-    return userRecipes.length > 0 ? userRecipes : null;
+  if (recipeprisma.length > 0) {
+    return recipeprisma.map((recipe: any) => Recipe.from(recipe));
+  } else {
+    return null;
+  }
 };
 
-const createRecipe = ({
-    id,
-    title,
-    description,
-    instructions,
-    portion_amount,
-    ownerUsername,
-    ingredients
+const createRecipe = async ({
+  title,
+  description,
+  instructions,
+  portion_amount,
+  ownerUsername,
+  ingredients,
 }: {
-    id: number;
-    title: string;
-    description: string;
-    instructions: string;
-    portion_amount: number;
-    ownerUsername: string;
-    ingredients: Ingredient[]
-}): Recipe => {
-    const newRecipe = new Recipe({
-        id,
-        title,
-        description,
-        instructions,
-        portion_amount,
-        ownerUsername,
-        ingredients
-    });
+  title: string;
+  description: string;
+  instructions: string;
+  portion_amount: number;
+  ownerUsername: string;
+  ingredients: IngredientRecipe[];
+}): Promise<Recipe> => {
+  const owner = await userDb.getUserByUsername({ username: ownerUsername });
 
-    const owner = userDb.getUserByUsername({ username: ownerUsername });
-    owner?.addRecipeToUser(newRecipe)
-    recipes.push(newRecipe);
-    return newRecipe;
-}
+  if (!owner) {
+    throw new Error('User not found');
+  }
+
+  // Create the recipe and connect ingredients
+  const recipePrisma = await database.recipe.create({
+    data: {
+      title,
+      description,
+      instructions,
+      portion_amount,
+      ownerUsername,  // The owner is linked to the username
+      ingredients: {
+        create: ingredients.map((ingredientRecipe) => ({
+          recipeId: ingredientRecipe.recipeId,
+          name: ingredientRecipe.name,
+          amount: ingredientRecipe.amount,
+          unit: ingredientRecipe.unit,
+        })),
+      },
+    },
+  });
+
+  // Return the created recipe, converting Prisma object to Recipe instance
+  return Recipe.from(recipePrisma);  // Now returning an instance of Recipe
+};
 
 
 export default {
-    getAllRecipes,
-    getRecipeById,
-    createRecipe,
-    getRecipeByUser,
-    deletRecipeById
+  getAllRecipes,
+  getRecipeById,
+  createRecipe,
+  getRecipeByUser,
+  deletRecipeById,
 };

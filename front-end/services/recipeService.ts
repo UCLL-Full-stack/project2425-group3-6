@@ -12,8 +12,8 @@ const getAllRecipes = async () => {
     return data;
   };
   
-  const getRecipeByUser = async (userName :string) => {
-    const response = await fetch(`http://localhost:3000/recipes/user/${userName}`);
+  const getRecipeByUser = async (username :string) => {
+    const response = await fetch(`http://localhost:3000/recipes/user/${username}`);
     if (!response.ok) {
         throw new Error('Failed to fetch lecturer');
     }

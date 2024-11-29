@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 const Login: React.FC = () => {
   const [existingUser, setExistingUser] = useState(true);
-  const [userName, setUserName] = useState('');
+  const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -24,15 +24,15 @@ const Login: React.FC = () => {
     setErrorMessage(''); // Reset error message at start
 
     // Check if fields are empty
-    if (!userName || !password) {
+    if (!username || !password) {
       setErrorMessage('Username and password are required.');
       return;
     }
 
     try {
-      const user = await userService.checkUserExist(userName, password);
+      const user = await userService.checkUserExist(username, password);
       if (user) {
-        sessionStorage.setItem('userName', userName);
+        sessionStorage.setItem('username', username);
         router.push('/my-recipes'); 
       } else {
         setErrorMessage('Invalid username or password.');
@@ -47,7 +47,7 @@ const Login: React.FC = () => {
     setErrorMessage(''); // Reset error message at start
 
     // Check if fields are empty
-    if (!userName) {
+    if (!username) {
       setErrorMessage('Username is required.');
       return;
     }
@@ -74,7 +74,7 @@ const Login: React.FC = () => {
 
     try {
       const user = await userService.addUser({
-        userName,
+        username,
         firstName,
         lastName,
         password,

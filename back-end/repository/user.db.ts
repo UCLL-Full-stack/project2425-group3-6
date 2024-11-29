@@ -1,91 +1,83 @@
-import { Recipe } from "../model/recipe";
 import { User } from "../model/user";
+import bcrypt from 'bcrypt';
+import database from "../util/database";
 
-const users = [
-    new User({
-        id: 1 ,
-        userName:"johndoe",
-        firstName:"John",
-        lastName:"Doe",
-        password:"Johndoe123",
-        email:"johndoe@outlook.com",
-        
-
-    }),
-
-    new User({
-        id: 2 ,
-        userName:"janedoe",
-        firstName:"Jane",
-        lastName:"Doe",
-        password:"JaneDoe123",
-        email:"janedoe@outlook.com"
-    })
-];
-
-
-
-const getAllUsers = (): User[] => {
-    return users;
-};
-
-const getUserById = ({ id }: { id: number }): User|null => {
-    const user = users.find(user => user.getId() === id);
-    if (user){
-        return user
-    }
-    else return null
-};
-
-const getUserByUsername = ({username} : {username: string}): User | null => {
-    return users.find(user => user.getUserName() === username) || null;
-};
-
-
-const addRecipeToUser = (userId: number, recipe: Recipe): User | null => {
-    const user = getUserById({ id: userId });
-    
-    if (!user) {
-        throw new Error(`User with ID ${userId} not found`);
-    }
+const getAllUsers = async (): Promise<User[]> => {
     try {
-        user.addRecipeToUser(recipe);
+        const usersPrisma = await database.user.findMany();
+        return usersPrisma.map((userPrisma: any) => User.from(userPrisma));
     } catch (error) {
-        console.error(`Error adding recipe to user`);
-        return null;
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
     }
-    return user;
 };
 
-const createUser = ({
-    userName,
-    firstName,
-    lastName,
-    password,
-    email
-}: {
-    userName: string;
+const getUserById = async ({ id }: { id: number }): Promise<User | null> => {
+    try {
+        const userPrisma = await database.user.findUnique({
+            where: { id },
+        });
+
+        return userPrisma ? User.from(userPrisma) : null;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Database error. See server log for details.');
+    }
+};
+
+const getUserByUsername = async ({ username }: { username: string }): Promise<User | null> => {
+    if (!username) {
+        throw new Error('Username is required');
+    }
+
+    try {
+        const userPrisma = await database.user.findFirst({ where: { username } });
+        if (!userPrisma) {
+            console.error(`User with username: ${username} not found.`);
+            return null;
+        }
+        return User.from(userPrisma);
+    } catch (error) {
+        console.error(`Database error`);
+        throw new Error('Database error. See server log for details.');
+    }
+};
+
+const createUser = async ({ username, password, firstName, lastName, email }: {
+    username: string;
+    password: string;
     firstName: string;
     lastName: string;
-    password: string;
-    email:string;
-}): User => {
-    const newUser = new User({
-        userName,
-        firstName,
-        lastName,
-        password,
-        email
+    email: string;
+}): Promise<User> => {
+    // Check if the user already exists
+    const existingUser = await getUserByUsername({ username });
+    if (existingUser) {
+        throw new Error('User already exists');
+    }
+
+    // Hash the password using bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create and save the new user
+    const userPrisma = await database.user.create({
+        data: {
+            username,
+            password: hashedPassword,
+            firstName,
+            lastName,
+            email,
+        },
     });
 
-    users.push(newUser);
-    return newUser;
-}
+    return User.from(userPrisma);
+};
+
+
 
 export default {
-    getUserByUsername,
     getAllUsers,
     getUserById,
-    addRecipeToUser,
+    getUserByUsername,
     createUser
 };
