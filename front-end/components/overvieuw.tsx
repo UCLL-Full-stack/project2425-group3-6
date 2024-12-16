@@ -276,6 +276,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
                                                                     <option value="tl">tl</option>
                                                                     <option value="el">el</option>
                                                                     <option value="cup">cup</option>
+                                                                    <option value="piece">piece</option>
                                                                 </select>
                                                                 <button 
                                                                     type="button"

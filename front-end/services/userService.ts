@@ -1,7 +1,13 @@
 import { User } from "@types";
 
+const getToken = () => sessionStorage.getItem("jwtToken");
+
 const getAllUsers = async () => {
+  const token = getToken();
   const response = await fetch(`http://localhost:3000/users`, {
+    headers: {
+        "Authorization": `Bearer ${token}`
+    }
   });
 
   if (!response.ok) {
@@ -13,7 +19,12 @@ const getAllUsers = async () => {
 };
 
 const getUserById = async (id :string) => {
-  const response = await fetch(`http://localhost:3000/users/${id}`);
+  const token = getToken();
+  const response = await fetch(`http://localhost:3000/users/${id}`, {
+    headers: {
+        "Authorization": `Bearer ${token}`
+    }
+  });
   if (!response.ok) {
       throw new Error('Failed to fetch lecturer');
   }

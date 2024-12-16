@@ -31,8 +31,11 @@ const Login: React.FC = () => {
 
     try {
       const user = await userService.checkUserExist(username, password);
+      console.log(user)
+      console.log(user.token)
       if (user) {
         sessionStorage.setItem('username', username);
+        sessionStorage.setItem('token', user.token);
         router.push('/my-recipes'); 
       } else {
         setErrorMessage('Invalid username or password.');

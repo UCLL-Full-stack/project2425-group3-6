@@ -1,8 +1,14 @@
 import { Recipe } from "@types";
 
+const getToken = () => sessionStorage.getItem("jwtToken");
+
 const getAllRecipes = async () => {
+    const token = getToken();
     const response = await fetch(`http://localhost:3000/recipes`, {
-    });
+      headers: {
+          "Authorization": `Bearer ${token}`
+      }
+  });
   
     if (!response.ok) {
         throw new Error(`Failed to fetch lecturer. Status: ${response.status}`);
@@ -13,7 +19,12 @@ const getAllRecipes = async () => {
   };
   
   const getRecipeByUser = async (username :string) => {
-    const response = await fetch(`http://localhost:3000/recipes/user/${username}`);
+    const token = getToken();
+    const response = await fetch(`http://localhost:3000/recipes/user/${username}`, {
+      headers: {
+          "Authorization": `Bearer ${token}`
+      }
+  });
     if (!response.ok) {
         throw new Error('Failed to fetch lecturer');
     }
@@ -21,18 +32,24 @@ const getAllRecipes = async () => {
   };
   
   const addRecipes = async (recipe : Recipe) => {
+    const token = getToken();
     return await fetch(`http://localhost:3000/recipes`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(recipe),
     });
   };
 
   const deleteRecipeById = async (id: number) => {
+    const token = getToken();
     const response = await fetch(`http://localhost:3000/recipes/${id}`, {
         method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${token}`
+      }
     });
     if (!response.ok) {
         throw new Error(`Failed to delete recipe.`);

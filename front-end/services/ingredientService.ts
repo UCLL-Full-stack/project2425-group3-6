@@ -1,6 +1,12 @@
+const getToken = () => sessionStorage.getItem("jwtToken");
+
 const getAllIngredients = async () => {
+    const token = getToken();
     const response = await fetch(`http://localhost:3000/ingredients`, {
-    });
+      headers: {
+          "Authorization": `Bearer ${token}`
+      }
+  });
   
     if (!response.ok) {
         throw new Error(`Failed to fetch lecturer. Status: ${response.status}`);
@@ -11,7 +17,12 @@ const getAllIngredients = async () => {
   };
   
   const getIngredientByName = async (username :string) => {
-    const response = await fetch(`http://localhost:3000/ingredients/search/${username}`);
+    const token = getToken();
+    const response = await fetch(`http://localhost:3000/ingredients/search/${username}`, {
+      headers: {
+          "Authorization": `Bearer ${token}`
+      }
+  });
     if (!response.ok) {
         throw new Error('Failed to fetch lecturer');
     }
