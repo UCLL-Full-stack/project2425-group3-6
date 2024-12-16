@@ -5,6 +5,7 @@ import RecipeService from "@services/recipeService";
 import { useRouter } from "next/router";
 import userService from "@services/userService";
 import IngredientService from "@services/ingredientService";
+import Header from "./header";
 
 interface RecipeOvervieuwProps {
     username: string; // Definieer de prop
