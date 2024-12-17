@@ -11,6 +11,7 @@ import Header from "./header";
 const OvervieuwDiscover: React.FC = () => {
     const [recepis, setRecepis] = useState<Recipe[]>([]);
     const [ingredients, setIngredients] = useState<IngredientRecipe[]>([]);
+    const [recepiId, setrecepiId] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const router = useRouter();
@@ -49,6 +50,11 @@ const OvervieuwDiscover: React.FC = () => {
         setErrorMessage("")
     };
 
+    const handleModalOpen = () => {
+        setIsModalOpen(true); 
+        setErrorMessage("")
+    };
+
     
 
     return (
@@ -75,14 +81,48 @@ const OvervieuwDiscover: React.FC = () => {
                                 </div>
                                 <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
                             </div>
-                            <button className="mt-4 self-end">
+                            <button className="mt-4 self-end"   onClick={() => {handleModalOpen(); setrecepiId(recipe.id);}}>
                                 <img src="./share.svg" alt="Share" height={30} width={30} />
                             </button>
                         </div>
                     ))}
                 </div>
-
-
+                <Modal 
+                    isOpen={isModalOpen} 
+                    onRequestClose={handleModalClose} 
+                    contentLabel="Add New Recipe"
+                    className="modal z-30 bg-[#fccfda] p-6 rounded-md shadow-lg min-w-[300px] modal"
+                    overlayClassName="fixed inset-0 bg-black h-screen w-screen bg-opacity-70 z-20"
+                >
+                    <p className="text-2xl text-center">http://localhost:8080/recipe/{recepiId}</p> 
+                    <div className="flex justify-evenly">
+                   
+                    <button  className="bg-[#ff5781] text-white p-2 rounded mt-4"  onClick={() => {handleModalClose();}}>
+                        Close
+                    </button>
+                    <button
+                        className="bg-[#ff5781] text-white p-2 rounded mt-4"
+                        onClick={() => {
+                            navigator.clipboard
+                                .writeText(
+                                `http://localhost:8080/recipe/${recepiId}`
+                                )
+                                .then(() => {
+                                alert("Link gekopieerd!");
+                                })
+                                .catch((err) => {
+                                console.error(
+                                    "Fout bij het kopiëren naar het klembord: ",
+                                    err
+                                );
+                                });
+                            }
+                        }
+                        >
+                        Kopieer
+                    </button>
+                    </div>
+                </Modal>
             </div>
         </>
     );
