@@ -73,17 +73,27 @@ const OvervieuwLiked: React.FC = () => {
                 </div>
                 <div className="flex flex-wrap justify-start w-screen px-10 mt-2">
                 {filteredRecipes.map((recipe) => (
-                        <div key={recipe.id} className="bg-[#fccfda] w-[30%] rounded-md p-5 mx-[1.6%] mt-14 flex flex-col justify-between">
-                            <div>
-                                <div className="flex justify-between">
-                                    <h2 className="text-3xl text-black capitalize mb-5">{recipe.title}</h2>
-                                </div>
-                                <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
+                        <div key={recipe.id} className="bg-[#fccfda] w-[30%] rounded-md p-5 mx-[1.6%] mt-14">
+                        <div className="flex justify-between items-center w-[100%]">
+                            <h2 className="text-3xl text-black capitalize mb-5">{recipe.title}</h2>
+                            <div className="flext justify-end mr-5">
+                            <button 
+                                    className="mr-3"  
+                                >
+                                    <img 
+                                        src= "./hartjerood.svg" 
+                                        alt="Like" 
+                                        height={30} 
+                                        width={30} 
+                                    />
+                                </button>
+                                <button  onClick={() => {handleModalOpen(); setrecepiId(recipe.id);}}>
+                                    <img src="./share.svg" alt="Share" height={30} width={30} />
+                                </button>
                             </div>
-                            <button className="mt-4 self-end"   onClick={() => {handleModalOpen(); setrecepiId(recipe.id);}}>
-                                <img src="./share.svg" alt="Share" height={30} width={30} />
-                            </button>
                         </div>
+                        <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
+                    </div>
                     ))}
                 </div>
                 <Modal 

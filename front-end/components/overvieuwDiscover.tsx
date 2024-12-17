@@ -10,6 +10,7 @@ import Header from "./header";
 
 const OvervieuwDiscover: React.FC = () => {
     const [recepis, setRecepis] = useState<Recipe[]>([]);
+    const [recepisLiked, setRecepisLiked] = useState<Recipe[]>([]);
     const [ingredients, setIngredients] = useState<IngredientRecipe[]>([]);
     const [recepiId, setrecepiId] = useState(0);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,6 +36,7 @@ const OvervieuwDiscover: React.FC = () => {
             const fetchAddLike = async () => {
                 console.log("fetching")
                 await RecipeService.addLike(recipeId, userId, token);
+                router.reload()
             };
             fetchAddLike();
         }
@@ -43,7 +45,8 @@ const OvervieuwDiscover: React.FC = () => {
 
     useEffect(() => {
         const token =  sessionStorage.getItem("token");
-        if(token){
+        const user =  sessionStorage.getItem("username");
+        if(token && user){
             console.log("jwt:", token)
             const fetchDataProjects = async () => {
                 try {
@@ -54,7 +57,17 @@ const OvervieuwDiscover: React.FC = () => {
                     console.error("Error fetching data:", error);
                 }
             };
+            const fetchLiked = async () => {
+                try {
+                    const data = await RecipeService.getLikesByUser(user, token);
+                    setRecepisLiked(data);
+                    console.log(data)
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            };
             fetchDataProjects();
+            fetchLiked();
         }
 
     }, []);
@@ -88,22 +101,30 @@ const OvervieuwDiscover: React.FC = () => {
                 </div>
                 <div className="flex flex-wrap justify-start w-screen px-10 mt-2">
                 {filteredRecipes.map((recipe) => (
-                        <div key={recipe.id} className="bg-[#fccfda] w-[30%] rounded-md p-5 mx-[1.6%] mt-14 flex flex-col justify-between">
-                            <div>
-                                <div className="flex justify-between">
-                                    <h2 className="text-3xl text-black capitalize mb-5">{recipe.title}</h2>
+                        <div key={recipe.id} className="bg-[#fccfda] w-[30%] rounded-md p-5 mx-[1.6%] mt-14">
+                            <div className="flex justify-between items-center w-[100%]">
+                                <h2 className="text-3xl text-black capitalize mb-5">{recipe.title}</h2>
+                                <div className="flext justify-end mr-5">
+                                <button 
+                                        className="mr-3"  
+                                        onClick={() => { 
+                                            console.log("Button clicked, recipeId:", recipe.id); 
+                                            addLike(recipe.id); 
+                                        }}
+                                    >
+                                        <img 
+                                            src={recepisLiked.some((likedRecipe) => likedRecipe.id === recipe.id) ? "./hartjerood.svg" : "./hartje.svg"} 
+                                            alt="Like" 
+                                            height={30} 
+                                            width={30} 
+                                        />
+                                    </button>
+                                    <button  onClick={() => {handleModalOpen(); setrecepiId(recipe.id);}}>
+                                        <img src="./share.svg" alt="Share" height={30} width={30} />
+                                    </button>
                                 </div>
-                                <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
                             </div>
-                            <button className="mt-4 self-end bg-white"  onClick={() => { 
-                                    console.log("Button clicked, recipeId:", recipe.id); 
-                                    addLike(recipe.id); 
-                                }}>
-                                Like
-                            </button>
-                            <button className="mt-4 self-end"   onClick={() => {handleModalOpen(); setrecepiId(recipe.id);}}>
-                                <img src="./share.svg" alt="Share" height={30} width={30} />
-                            </button>
+                            <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
                         </div>
                     ))}
                 </div>
