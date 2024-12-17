@@ -69,15 +69,100 @@ async function main() {
     }
 
     console.log("Seeding complete!");
-}
 
-(async () => {
-    try {
-        await main();
-        await prisma.$disconnect();
-    } catch (error) {
-        console.error(error);
-        await prisma.$disconnect();
-        process.exit(1);
+    console.log("Seeding user...");
+    const user = await prisma.user.create({
+      data: {
+        username: "chefmaster",
+        firstName: "John",
+        lastName: "Doe",
+        password: "securepassword",
+        email: "chefmaster@example.com",
+      },
+    });
+    console.log("User seeded:", user);
+
+    console.log("Seeding recipes...");
+    const recipes = [
+       {
+      title: "Pancakes",
+      description: "Fluffy and delicious pancakes.",
+      instructions: "Mix all ingredients and fry in a pan.",
+      portion_amount: 4,
+      ownerUsername: user.username,
+      ingredients: [
+        { name: "Flour", amount: 200, unit: "g" },
+        { name: "Eggs", amount: 2, unit: "piece" },
+        { name: "Milk", amount: 250, unit: "ml" },
+      ],
+    },
+    {
+      title: "Scrambled Eggs",
+      description: "Quick and easy scrambled eggs.",
+      instructions: "Whisk eggs, cook in butter, and season with salt.",
+      portion_amount: 2,
+      ownerUsername: user.username,
+      ingredients: [
+        { name: "Eggs", amount: 3, unit: "piece" },
+        { name: "Butter", amount: 20, unit: "g" },
+      ],
+    },
+    {
+      title: "Butter Cake",
+      description: "Rich buttery cake for dessert.",
+      instructions: "Mix butter, sugar, and flour, bake in the oven.",
+      portion_amount: 6,
+      ownerUsername: user.username,
+      ingredients: [
+        { name: "Butter", amount: 100, unit: "g" },
+        { name: "Sugar", amount: 150, unit: "g" },
+        { name: "Flour", amount: 200, unit: "g" },
+      ],
+    },
+    {
+      title: "French Toast",
+      description: "Sweet and crispy French toast.",
+      instructions: "Dip bread in egg mixture and fry in butter.",
+      portion_amount: 3,
+      ownerUsername: user.username,
+      ingredients: [
+        { name: "Eggs", amount: 2, unit: "piece" },
+        { name: "Milk", amount: 100, unit: "ml" },
+        { name: "Butter", amount: 10, unit: "g" },
+      ],
+    },
+    ];
+  
+    for (const recipe of recipes) {
+        const recipeRecord = await prisma.recipe.create({
+          data: {
+            title: recipe.title,
+            description: recipe.description,
+            instructions: recipe.instructions,
+            portion_amount: recipe.portion_amount,
+            ownerUsername: recipe.ownerUsername,
+            ingredients: {
+              create: recipe.ingredients.map((ingredient) => ({
+                name: ingredient.name,
+                amount: ingredient.amount,
+                unit: ingredient.unit,
+              })),
+            },
+          },
+        });
+        console.log(`Recipe seeded: ${recipeRecord.title}`);
     }
-})();
+    console.log("Recipes seeded!");
+  }
+  
+  (async () => {
+    try {
+      await main();
+      await prisma.$disconnect();
+    } catch (error) {
+      console.error(error);
+      await prisma.$disconnect();
+      process.exit(1);
+    }
+  })();
+

@@ -79,17 +79,22 @@ export class Recipe {
 
 
 
-    static from({ id, title, description, instructions, portion_amount, owner, ownerUsername,ingredients }: any): Recipe {
+    static from({ id, title, description, instructions, portion_amount, owner, ownerUsername, ingredients }: any): Recipe {
         return new Recipe({
-        id,
-        title,
-        description,
-        instructions,
-        portion_amount,
-        owner,
-        ownerUsername,
-        ingredients
+          id,
+          title,
+          description,
+          instructions,
+          portion_amount,
+          owner,
+          ownerUsername,
+          ingredients: ingredients.map((ingredient: any) => ({
+            id: ingredient.id,
+            name: ingredient.name,
+            amount: ingredient.amount,
+            unit: ingredient.unit,
+          })),
         });
-    }
+      }      
 }
 

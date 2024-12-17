@@ -30,7 +30,6 @@ const myRecepies: React.FC = () => {
           </style>
           <Header></Header>
           <div className='bg-gradient-to-br from-[#2b8f0a] to-[#8cb57f] min-h-[90vh] relative'>
-            <h1 className='text-5xl text-white titletext2 text-center pt-10'>Discover</h1>
             <OvervieuwDiscover/>
           </div>
         </main>

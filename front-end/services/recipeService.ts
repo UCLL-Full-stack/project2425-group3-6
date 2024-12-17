@@ -1,9 +1,6 @@
 import { Recipe } from "@types";
 
-const getToken = () => sessionStorage.getItem("jwtToken");
-
-const getAllRecipes = async () => {
-    const token = getToken();
+const getAllRecipes = async (token : string) => {
     const response = await fetch(`http://localhost:3000/recipes`, {
       headers: {
           "Authorization": `Bearer ${token}`
@@ -18,8 +15,7 @@ const getAllRecipes = async () => {
     return data;
   };
   
-  const getRecipeByUser = async (username :string) => {
-    const token = getToken();
+  const getRecipeByUser = async (username :string, token : string) => {
     const response = await fetch(`http://localhost:3000/recipes/user/${username}`, {
       headers: {
           "Authorization": `Bearer ${token}`
@@ -31,8 +27,7 @@ const getAllRecipes = async () => {
     return await response.json();
   };
   
-  const addRecipes = async (recipe : Recipe) => {
-    const token = getToken();
+  const addRecipes = async (recipe : Recipe, token : string) => {
     return await fetch(`http://localhost:3000/recipes`, {
         method: "POST",
         headers: {
@@ -43,8 +38,7 @@ const getAllRecipes = async () => {
     });
   };
 
-  const deleteRecipeById = async (id: number) => {
-    const token = getToken();
+  const deleteRecipeById = async (id: number, token : string) => {
     const response = await fetch(`http://localhost:3000/recipes/${id}`, {
         method: "DELETE",
         headers: {

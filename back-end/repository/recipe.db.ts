@@ -4,16 +4,26 @@ import database from "../util/database";
 import userDb from "./user.db";
 
 const getAllRecipes = async (): Promise<Recipe[]> => {
-  const recipeprisma = await database.recipe.findMany();
+  const recipeprisma = await database.recipe.findMany({
+    include: {
+      ingredients: true,
+    },
+  });
   return recipeprisma.map((recipeprisma: any) => Recipe.from(recipeprisma));
 };
+
 
 const getRecipeById = async ({ id }: { id: number }): Promise<Recipe | null> => {
   const recipeprisma = await database.recipe.findUnique({
     where: { id },
+    include: {
+      ingredients: true,
+    },
   });
+
   return recipeprisma ? Recipe.from(recipeprisma) : null;
 };
+
 
 const deletRecipeById = async ({ id }: { id: number }): Promise<String | null> => {
   const recipeprisma = await database.recipe.findUnique({
@@ -34,6 +44,9 @@ const deletRecipeById = async ({ id }: { id: number }): Promise<String | null> =
 const getRecipeByUser = async ({ username }: { username: string }): Promise<Recipe[] | null> => {
   const recipeprisma = await database.recipe.findMany({
     where: { ownerUsername: username },
+    include: {
+      ingredients: true,
+    },
   });
 
   if (recipeprisma.length > 0) {
@@ -41,7 +54,7 @@ const getRecipeByUser = async ({ username }: { username: string }): Promise<Reci
   } else {
     return null;
   }
-};
+}
 
 const createRecipe = async ({
   title,

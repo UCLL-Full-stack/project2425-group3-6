@@ -25,6 +25,8 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [ingredientAmount, setIngredienAmount] = useState(0);
     const [ingredientType, setIngredienType] = useState("g");
+   
+
 
     
     const filteredIngredients = ingredients
@@ -33,15 +35,20 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
     )
 
     useEffect(() => {
-        const fetchDataProjects = async () => {
-            console.log(username)
-            try {
-                const data = await RecipeService.getRecipeByUser(username);
-                setRecepis(data);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
+        const token =  sessionStorage.getItem("token");
+        console.log(token)
+        if(token){
+            const fetchDataProjects = async () => {
+                console.log(username)
+                try {
+                    const data = await RecipeService.getRecipeByUser(username, token);
+                    setRecepis(data);
+                } catch (error) {
+                    console.error("Error fetching data:", error);
+                }
+            };
+            fetchDataProjects();
+        }
         const fetchDataIngredients = async () => {
             console.log(username)
             try {
@@ -52,7 +59,6 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
                 console.error("Error fetching data:", error);
             }
         };
-        fetchDataProjects();
         fetchDataIngredients();
     }, []);
 
@@ -70,6 +76,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
     const handleCreateRecipe = async (e: React.FormEvent) => {
         e.preventDefault();
         setErrorMessage(''); 
+        const token =  sessionStorage.getItem("token");
 
     
         if (!title) {
@@ -97,22 +104,23 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
             return;
           }
     
-    
-        try {
-          const recipe = await RecipeService.addRecipes({
-              id : 0,
-              title,
-              description,
-              instructions,
-              portion_amount: portionAmount,
-              ownerUsername: username,
-              ingredients: selectedIngredients
-          });
-          if(recipe){
-            router.reload()
-          }
-        } catch (error: any) {
-          setErrorMessage(error.message || 'An error occurred. Please try again.');
+        if(token){
+            try {
+                const recipe = await RecipeService.addRecipes({
+                    id : 0,
+                    title,
+                    description,
+                    instructions,
+                    portion_amount: portionAmount,
+                    ownerUsername: username,
+                    ingredients: selectedIngredients
+                }, token);
+                if(recipe){
+                  router.reload()
+                }
+            } catch (error: any) {
+                setErrorMessage(error.message || 'An error occurred. Please try again.');
+            }
         }
       };
 
@@ -142,7 +150,10 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
     };
 
     const removeRecipe = async (id: number) => {
-        await RecipeService.deleteRecipeById(id);
+        const token =  sessionStorage.getItem("token");
+        if(token){
+            await RecipeService.deleteRecipeById(id, token);
+        }
         router.reload()
     };
     

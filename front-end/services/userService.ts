@@ -1,6 +1,6 @@
 import { User } from "@types";
 
-const getToken = () => sessionStorage.getItem("jwtToken");
+const getToken = () => sessionStorage.getItem("token");
 
 const getAllUsers = async () => {
   const token = getToken();

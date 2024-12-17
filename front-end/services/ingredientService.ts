@@ -1,4 +1,4 @@
-const getToken = () => sessionStorage.getItem("jwtToken");
+const getToken = () => sessionStorage.getItem("token");
 
 const getAllIngredients = async () => {
     const token = getToken();
