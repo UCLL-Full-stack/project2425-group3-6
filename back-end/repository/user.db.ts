@@ -30,7 +30,6 @@ const getUserById = async ({ id }: { id: number }): Promise<User | null> => {
 const getFavouriteRecipes = async (userName: string): Promise<Recipe[]> => {
     console.log("Reached this part of the code");
 
-    // Haal de favoriete recepten op
     const userFavourites = await database.userFavouriteRecipe.findMany({
         where: { userName },
         select: { recipeId: true },
@@ -43,7 +42,6 @@ const getFavouriteRecipes = async (userName: string): Promise<Recipe[]> => {
 
     const recipeIds = userFavourites.map(fav => fav.recipeId);
 
-    // Haal de recepten op
     const rawRecipes = await database.recipe.findMany({
         where: { id: { in: recipeIds } },
     });
@@ -52,11 +50,10 @@ const getFavouriteRecipes = async (userName: string): Promise<Recipe[]> => {
 
     const validRecipes: Recipe[] = [];
 
-    // Valideer en verwerk recepten
     for (const rawRecipe of rawRecipes) {
         if (!rawRecipe.title || !rawRecipe.description || !rawRecipe.instructions) {
             console.error(`[ERROR] Invalid recipe: ${JSON.stringify(rawRecipe)}`);
-            continue; // Sla ongeldige recepten over
+            continue; 
         }
 
         try {
@@ -69,15 +66,23 @@ const getFavouriteRecipes = async (userName: string): Promise<Recipe[]> => {
 
     console.log("Valid Recipes:", validRecipes);
 
-    return validRecipes; // Geen dubbele verwerking meer!
+    return validRecipes;
 };
 
+const removeFavouriteRecipeFromUser = async (userName: string, recipeId: number): Promise<void> => {
+    const deletedFavourite = await database.userFavouriteRecipe.deleteMany({
+        where: {
+            userName: userName,
+            recipeId: recipeId,
+        },
+    });
 
+    if (deletedFavourite.count === 0) {
+        console.log(`Favorite recipe not found for user ${userName} and recipeId ${recipeId}`);
+    }
 
-
-
-
-
+    console.log(`Successfully removed recipe with id ${recipeId} from user ${userName}'s favorites`);
+};
 
 const getUserByUsername = async ({ username }: { username: string }): Promise<User | null> => {
     if (!username) {
@@ -155,5 +160,6 @@ export default {
     getUserByUsername,
     createUser,
     addFavouriteRecipeToUser,
-    getFavouriteRecipes
+    getFavouriteRecipes,
+    removeFavouriteRecipeFromUser
 };

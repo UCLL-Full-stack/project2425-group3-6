@@ -2,7 +2,6 @@ import { IngredientRecipe } from "../types";
 import { Ingredient } from "./ingredient";
 import { User } from "./user";
 
-// De Recipe klasse
 export class Recipe {
     private id?: number;
     private title: string;
@@ -36,7 +35,6 @@ export class Recipe {
         this.favouritedBy = recipe.favouritedBy;
     }
 
-    // Getters voor de verschillende velden
     getId(): number | undefined {
         return this.id;
     }
@@ -94,8 +92,8 @@ export class Recipe {
         portion_amount, 
         owner, 
         ownerUsername, 
-        ingredients = [], // Optioneel: standaard naar lege array
-        favouritedBy = [] // Optioneel: standaard naar lege array
+        ingredients = [], 
+        favouritedBy = [] 
     }: any): Recipe {
         return new Recipe({
             id,

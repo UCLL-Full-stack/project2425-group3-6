@@ -263,11 +263,11 @@ recipeRouter.post('/', async (req: Request, res: Response, next: NextFunction) =
  *     description: Returns a list of all recipes for a specific user.
  */
 recipeRouter.get('/user/:username', async (req: Request, res: Response, next: NextFunction) => {
-  const { username } = req.params; // Haal de gebruikersnaam op uit de URL-parameters
+  const { username } = req.params; 
   try {
-      const recipes = await recipeService.getRecipeByUser(username); // Voeg deze servicefunctie toe
+      const recipes = await recipeService.getRecipeByUser(username); 
       if (recipes.length > 0) {
-          res.status(200).json(recipes); // Retourneer de recepten als ze gevonden zijn
+          res.status(200).json(recipes); 
       } else {
           res.status(404).json({ status: 'error', errorMessage: 'No recipes found for this user.' });
       }
@@ -317,16 +317,16 @@ recipeRouter.get('/user/:username', async (req: Request, res: Response, next: Ne
  *                   type: string
  */
 recipeRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
-  const { id } = req.params; // Haal het ID op uit de URL-parameters
+  const { id } = req.params; 
   try {
-      const deletedRecipe = await recipeService.deleteRecipeById(Number(id)); // Verwijder het recept met het opgegeven ID
+      const deletedRecipe = await recipeService.deleteRecipeById(Number(id)); 
       if (deletedRecipe) {
-          res.status(204).send(); // Stuur een 204 No Content als het recept succesvol is verwijderd
+          res.status(204).send(); 
       } else {
-          res.status(404).json({ status: 'error', errorMessage: 'Recipe not found.' }); // Als het recept niet bestaat
+          res.status(404).json({ status: 'error', errorMessage: 'Recipe not found.' }); 
       }
   } catch (error) {
-      res.status(400).json({ status: 'error', errorMessage: (error as Error).message }); // Verwerk eventuele fouten
+      res.status(400).json({ status: 'error', errorMessage: (error as Error).message }); 
   }
 });
 

@@ -105,7 +105,7 @@ ingredientRouter.get('/', async (req: Request, res: Response, next: NextFunction
  *                   type: string
  */
 ingredientRouter.get('/search/:query', async (req: Request, res: Response, next: NextFunction) => {
-    const { query } = req.params; // Extracting the search query from URL parameters
+    const { query } = req.params;
     try {
         if (!query) {
             throw new Error("Search query parameter is required.");

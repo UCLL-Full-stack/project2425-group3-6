@@ -25,7 +25,7 @@ const getRecipeById = async ({ id }: { id: number }): Promise<Recipe | null> => 
 };
 
 
-const deletRecipeById = async ({ id }: { id: number }): Promise<String | null> => {
+const deletRecipeById = async ({ id }: { id: number }): Promise<string | null> => {
   const recipeprisma = await database.recipe.findUnique({
     where: { id },
   });
@@ -34,12 +34,17 @@ const deletRecipeById = async ({ id }: { id: number }): Promise<String | null> =
     return null;
   }
 
+  await database.ingredientRecipeType.deleteMany({
+    where: { recipeId: id },
+  });
+
   await database.recipe.delete({
     where: { id },
   });
 
-  return "recipe deleted";
+  return "Recipe deleted";
 };
+
 
 const getRecipeByUser = async ({ username }: { username: string }): Promise<Recipe[] | null> => {
   const recipeprisma = await database.recipe.findMany({
@@ -77,14 +82,13 @@ const createRecipe = async ({
     throw new Error('User not found');
   }
 
-  // Create the recipe and connect ingredients
   const recipePrisma = await database.recipe.create({
     data: {
       title,
       description,
       instructions,
       portion_amount,
-      ownerUsername,  // The owner is linked to the username
+      ownerUsername,  
       ingredients: {
         create: ingredients.map((ingredientRecipe) => ({
           recipeId: ingredientRecipe.recipeId,
@@ -96,8 +100,7 @@ const createRecipe = async ({
     },
   });
 
-  // Return the created recipe, converting Prisma object to Recipe instance
-  return Recipe.from(recipePrisma);  // Now returning an instance of Recipe
+  return Recipe.from(recipePrisma);  
 };
 
 

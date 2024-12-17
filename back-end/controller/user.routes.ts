@@ -134,12 +134,11 @@ userRouter.post(
                 });
             }
 
-            // Call the authenticate method in the service layer
             const authResponse = await userService.authenticate(username, password);
 
             res.status(200).json({
                 message: 'Authentication successful',
-                ...authResponse, // Includes token, username, fullname
+                ...authResponse, 
             });
         } catch (error) {
           console.error(error);
@@ -174,10 +173,9 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
     try {
         const { username, password, firstName, lastName, email} = req.body;
 
-        // Call the createUser function to create the user
         const newUser = await userService.createUser({ username, password, firstName, lastName, email});
 
-        res.status(201).json(newUser);  // Return the created user
+        res.status(201).json(newUser);  
     } catch (error) {
         console.error(error);
     }
@@ -269,32 +267,73 @@ userRouter.get(
       const { userName } = req.params;
   
       try {
-        // Haal favoriete recepten op via de service
         const favouriteRecipes = await userService.getFavouriteRecipes(userName);
   
-        // Controleer of er recepten zijn gevonden
         if (favouriteRecipes.length === 0) {
           return res
             .status(404)
             .json({ message: `No favourite recipes found for user ${userName}.` });
         }
   
-        // Retourneer de recepten
         res.status(200).json(favouriteRecipes);
       } catch (error) {
         console.error(`Error fetching favourite recipes for user ${userName}:`, error);
   
-        // Verzend een generieke foutmelding naar de client
         res
           .status(500)
           .json({ message: "An error occurred while retrieving favourite recipes." });
   
-        // Geef de fout door aan de error handler
         next(error);
       }
     }
   );
   
+  /**
+ * @swagger
+ * /users/{userName}/favourites/{recipeId}:
+ *   delete:
+ *     summary: Remove a recipe from the user's favourites
+ *     parameters:
+ *       - name: userName
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Username of the user
+ *       - name: recipeId
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the recipe to remove from favourites
+ *     responses:
+ *       200:
+ *         description: Recipe successfully removed from favourites.
+ *       404:
+ *         description: User or recipe not found.
+ *       500:
+ *         description: Internal server error.
+ */
+userRouter.delete(
+  '/:userName/favourites/:recipeId',
+  async (req: Request, res: Response, next: NextFunction) => {
+      const { userName, recipeId } = req.params;
+      
+      if (!userName || !recipeId) {
+          return res.status(400).json({ message: 'Both userName and recipeId are required.' });
+      }
+
+      try {
+          await userService.deleteFavouriteRecipeToUser(userName, parseInt(recipeId));
+          res.status(200).json({ message: `Recipe with id ${recipeId} successfully removed from ${userName}'s favourites.` });
+      } catch (error) {
+          console.error(error);
+          res.status(500).json({ message: "An error occurred while removing the favourite recipe." });
+          next(error);
+      }
+  }
+);
+
   
   
 

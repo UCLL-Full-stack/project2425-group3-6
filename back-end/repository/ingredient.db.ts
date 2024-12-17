@@ -32,7 +32,7 @@ const searchIngredients = async (query: string): Promise<Ingredient[]> => {
         const allIngredients = await database.ingredient.findMany();
 
         return allIngredients.filter((ingredient: any) =>
-            ingredient.name.toLowerCase().includes(lowerCaseQuery)  // Assuming 'name' is the field you're searching by
+            ingredient.name.toLowerCase().includes(lowerCaseQuery)  
         ).map((ingredient: any) => Ingredient.from(ingredient));
 
     } catch (error) {

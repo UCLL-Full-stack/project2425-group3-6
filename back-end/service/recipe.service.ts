@@ -26,12 +26,11 @@ const deleteRecipeById = (id: number): string => {
 const getRecipeByUser = async (username: string): Promise<Recipe[]> => {
     const recipes = await recipeDb.getRecipeByUser({ username });
     
-    // Check if the returned recipes are null or empty, and handle accordingly
     if (!recipes) {
         throw new Error(`No recipes found for user ${username}.`);
     }
     
-    return recipes; // If recipes exist, return them
+    return recipes; 
 };
 
 const createRecipe = async ({
@@ -42,21 +41,19 @@ const createRecipe = async ({
     ownerUsername,
     ingredients
 }: RecipeInput): Promise<Recipe> => {
-    // Fetch the owner to check if the user exists
     const owner = await userDb.getUserByUsername({ username: ownerUsername });
     if (!owner) {
         throw new Error(`User with username ${ownerUsername} does not exist.`);
     }
 
 
-    // Create the recipe with the prepared ingredients
     const recipe = await recipeDb.createRecipe({
         title,
         description,
         instructions,
         portion_amount,
         ownerUsername,
-        ingredients, // Use the populated ingredients
+        ingredients, 
     });
 
     return recipe;

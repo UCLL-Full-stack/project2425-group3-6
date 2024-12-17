@@ -39,12 +39,15 @@ export const createUser = async (userInput: UserInput): Promise<User> => {
         email: userInput.email,
     };
   
-    // 4. Save the new user to the database
     return await userDb.createUser(newUser);
   };
 
   const addFavouriteRecipeToUser = async (userName: string, recipeId: number ) : Promise<void> => {
     await userDb.addFavouriteRecipeToUser(userName, recipeId);
+  }
+
+  const deleteFavouriteRecipeToUser = async (userName: string, recipeId: number ) : Promise<void> => {
+    await userDb.removeFavouriteRecipeFromUser(userName, recipeId);
   }
 
   const getFavouriteRecipes = async (userName: string) : Promise<Recipe[]> => {
@@ -65,17 +68,13 @@ export const createUser = async (userInput: UserInput): Promise<User> => {
         throw new Error('Invalid credentials');
     }
   
-    // 2. Verify the password
-    const isPasswordCorrect = await user.verifyPassword(password); // Use verifyPassword method
-  
+    const isPasswordCorrect = await user.verifyPassword(password);
     if (!isPasswordCorrect) {
         throw new Error('Invalid credentials');
     }
   
-    // 3. Generate JWT token
     const token = generateJwtToken({ username: user.getUserName()});
   
-    // 4. Return the user info and token
     return {
         username: user.getUserName(),
         fullname: `${user.getFirstName()} ${user.getLastName()}`,
@@ -86,4 +85,4 @@ export const createUser = async (userInput: UserInput): Promise<User> => {
 
 
 
-export default { getAllUsers, getUserById, getUserByUsername, authenticate, createUser, addFavouriteRecipeToUser, getFavouriteRecipes};
+export default { getAllUsers, getUserById, getUserByUsername, authenticate, createUser, addFavouriteRecipeToUser, getFavouriteRecipes, deleteFavouriteRecipeToUser};

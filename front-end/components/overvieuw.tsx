@@ -8,7 +8,7 @@ import IngredientService from "@services/ingredientService";
 import Header from "./header";
 
 interface RecipeOvervieuwProps {
-    username: string; // Definieer de prop
+    username: string; 
   }
 
 const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
@@ -127,7 +127,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
       const addIngredient = (name: string, ingredientId: number | undefined, amount: number, unit: string) => {
         const newIngredient: IngredientRecipe = {
             name,
-            ingredientId, // Assuming the ingredientId is the same as the id
+            ingredientId, 
             amount,
             unit,
         };
@@ -168,23 +168,21 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
                     {recepis.map((recipe) => (
                                     <div key={recipe.id} className="bg-[#fccfda] w-[30%] rounded-md p-5 flex flex-col justify-between">
                                         <div>
-                                            <div className="flex justify-between">
-                                                <h2 className="text-3xl text-black capitalize mb-5">{recipe.title}</h2>
-                                                <button 
-                                                onClick={() => removeRecipe(recipe.id)}
-                                                className="bg-[#2b8f0a] p-2 rounded text-white">
-                                                    Delete
-                                                </button>
+                                            <div className="flex justify-between items-center mb-4">
+                                                <h2 className="text-3xl text-black capitalize">{recipe.title}</h2>
+                                                <div className="flex items-center">
+                                                    <button
+                                                    onClick={() => removeRecipe(recipe.id)}
+                                                    className="bg-[#2b8f0a] hover:rounded-3xl p-2 rounded mr-4 text-white">
+                                                        Delete
+                                                    </button>
+                                                    <button className="">
+                                                        <img src="./share.svg" alt="Share" height={30} width={30} />
+                                                    </button>
+                                                </div>
                                             </div>
-                                            
-                                            <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
-                                            <p className="comic-neue-regular text-black text-xl mb-4">{recipe.portion_amount}</p>
-
+                                            <p className="comic-neue-regular text-black text-xl">{recipe.description}</p>
                                         </div>
-                                        <button className="mt-4 self-end">
-                                            <img src="./share.svg" alt="Share" height={30} width={30} />
-                                        </button>
-                                        
                                     </div>
                                 ))}
                 </div>
@@ -264,7 +262,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
                                                         <button
                                                             type="button"
                                                             onClick={() => removeIngredient(ingredient.id)}
-                                                            className="p-2 rounded bg-[#2b8f0a] text-white"
+                                                            className="p-2 rounded bg-[#2b8f0a] hover:rounded-xl text-white"
                                                         >
                                                             Remove
                                                         </button>

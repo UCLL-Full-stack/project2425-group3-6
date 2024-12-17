@@ -49,6 +49,15 @@ const OvervieuwLiked: React.FC = () => {
         setErrorMessage("")
     };
 
+    const deleteLike = (recipeId: number) => {
+        const token =  sessionStorage.getItem("token");
+        const user =  sessionStorage.getItem("username");
+        if(token && user){
+            RecipeService.deleteFavouriteRecipe(user, recipeId, token)
+            router.reload()
+        }
+    };
+
     const handleModalOpen = () => {
         setIsModalOpen(true); 
         setErrorMessage("")
@@ -68,7 +77,7 @@ const OvervieuwLiked: React.FC = () => {
                         placeholder="Search by ingredient..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="outline-none  bg-white rounded-xl px-4 py-2 w-1/2 text-xl" // Toegevoegd focus effect
+                        className="outline-none  bg-white rounded-xl px-4 py-2 w-1/2 text-xl"
                         />
                 </div>
                 <div className="flex flex-wrap justify-start w-screen px-10 mt-2">
@@ -78,7 +87,8 @@ const OvervieuwLiked: React.FC = () => {
                             <h2 className="text-3xl text-black capitalize mb-5">{recipe.title}</h2>
                             <div className="flext justify-end mr-5">
                             <button 
-                                    className="mr-3"  
+                                    className="mr-3"
+                                    onClick={() => {deleteLike(recipe.id);}}  
                                 >
                                     <img 
                                         src= "./hartjerood.svg" 

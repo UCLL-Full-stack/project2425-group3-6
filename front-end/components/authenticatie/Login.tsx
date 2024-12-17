@@ -21,9 +21,7 @@ const Login: React.FC = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage(''); // Reset error message at start
-
-    // Check if fields are empty
+    setErrorMessage(''); 
     if (!username || !password) {
       setErrorMessage('Username and password are required.');
       return;
@@ -48,9 +46,8 @@ const Login: React.FC = () => {
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage(''); // Reset error message at start
+    setErrorMessage(''); 
 
-    // Check if fields are empty
     if (!username) {
       setErrorMessage('Username is required.');
       return;

@@ -1,10 +1,9 @@
 import { Ingredient } from "../model/ingredient";
 import ingredientDb from "../repository/ingredient.db";
 
-// Async method for fetching all ingredients
 const getAllIngredients = async (): Promise<Ingredient[]> => {
     try {
-        const ingredients = await ingredientDb.getAllIngredients(); // Await the async db call
+        const ingredients = await ingredientDb.getAllIngredients(); 
         return ingredients;
     } catch (error) {
         console.error(error);
@@ -12,10 +11,9 @@ const getAllIngredients = async (): Promise<Ingredient[]> => {
     }
 };
 
-// Async method to fetch ingredient by ID
 const getIngredientById = async (id: number): Promise<Ingredient> => {
     try {
-        const ingredient = await ingredientDb.getIngredientById({ id }); // Await the async db call
+        const ingredient = await ingredientDb.getIngredientById({ id }); 
 
         if (ingredient) {
             return ingredient;
@@ -28,10 +26,9 @@ const getIngredientById = async (id: number): Promise<Ingredient> => {
     }
 };
 
-// Async search method for ingredients
 const searchIngredients = async (query: string): Promise<Ingredient[]> => {
     try {
-        const results = await ingredientDb.searchIngredients(query); // Await the async db call
+        const results = await ingredientDb.searchIngredients(query);
         return results;
     } catch (error) {
         console.error(error);

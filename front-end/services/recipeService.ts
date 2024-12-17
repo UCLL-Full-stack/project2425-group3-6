@@ -73,6 +73,23 @@ const getAllRecipes = async (token : string) => {
     }
 };
 
+const deleteFavouriteRecipe = async (userName: string, recipeId: number, token : string) => {
+  
+  const response = await fetch(`http://localhost:3000/users/${userName}/favourites/${recipeId}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || 'Failed to remove favourite recipe');
+  }
+};
+
+
   
   const RecipeService = {
     getAllRecipes,
@@ -80,7 +97,8 @@ const getAllRecipes = async (token : string) => {
     addRecipes,
     deleteRecipeById,
     addLike,
-    getLikesByUser
+    getLikesByUser,
+    deleteFavouriteRecipe
   };
   
   export default RecipeService;

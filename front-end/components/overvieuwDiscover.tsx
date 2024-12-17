@@ -82,6 +82,15 @@ const OvervieuwDiscover: React.FC = () => {
         setErrorMessage("")
     };
 
+    const deleteLike = (recipeId: number) => {
+        const token =  sessionStorage.getItem("token");
+        const user =  sessionStorage.getItem("username");
+        if(token && user){
+            RecipeService.deleteFavouriteRecipe(user, recipeId, token)
+            router.reload()
+        }
+    };
+
     
 
     return (
@@ -96,7 +105,7 @@ const OvervieuwDiscover: React.FC = () => {
                         placeholder="Search by ingredient..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="outline-none  bg-white rounded-xl px-4 py-2 w-1/2 text-xl" // Toegevoegd focus effect
+                        className="outline-none  bg-white rounded-xl px-4 py-2 w-1/2 text-xl" 
                         />
                 </div>
                 <div className="flex flex-wrap justify-start w-screen px-10 mt-2">
@@ -107,9 +116,8 @@ const OvervieuwDiscover: React.FC = () => {
                                 <div className="flext justify-end mr-5">
                                 <button 
                                         className="mr-3"  
-                                        onClick={() => { 
-                                            console.log("Button clicked, recipeId:", recipe.id); 
-                                            addLike(recipe.id); 
+                                        onClick={() => { recepisLiked.some((likedRecipe) => likedRecipe.id === recipe.id) ?
+                                            deleteLike(recipe.id):addLike(recipe.id)
                                         }}
                                     >
                                         <img 
