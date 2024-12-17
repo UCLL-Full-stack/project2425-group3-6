@@ -12,6 +12,7 @@ export class Recipe {
     private ownerUsername: string;
     private owner: User;
     private ingredients: IngredientRecipe[];
+    private favouritedBy: User[];
 
     constructor(recipe: {
         id?: number;
@@ -22,6 +23,7 @@ export class Recipe {
         owner: User;
         ownerUsername: string;
         ingredients: IngredientRecipe[];
+        favouritedBy: User[]
     }) {
         this.id = recipe.id;
         this.title = recipe.title;
@@ -31,6 +33,7 @@ export class Recipe {
         this.owner = recipe.owner;
         this.ownerUsername = recipe.ownerUsername;
         this.ingredients = recipe.ingredients;
+        this.favouritedBy = recipe.favouritedBy;
     }
 
     // Getters voor de verschillende velden
@@ -62,6 +65,10 @@ export class Recipe {
         return this.owner;
     }
 
+    getfavouritedBy(): User[] {
+        return this.favouritedBy;
+    }
+
     getIngredients(): IngredientRecipe[] {
         return this.ingredients;
     }
@@ -79,22 +86,34 @@ export class Recipe {
 
 
 
-    static from({ id, title, description, instructions, portion_amount, owner, ownerUsername, ingredients }: any): Recipe {
+    static from({ 
+        id, 
+        title, 
+        description, 
+        instructions, 
+        portion_amount, 
+        owner, 
+        ownerUsername, 
+        ingredients = [], // Optioneel: standaard naar lege array
+        favouritedBy = [] // Optioneel: standaard naar lege array
+    }: any): Recipe {
         return new Recipe({
-          id,
-          title,
-          description,
-          instructions,
-          portion_amount,
-          owner,
-          ownerUsername,
-          ingredients: ingredients.map((ingredient: any) => ({
-            id: ingredient.id,
-            name: ingredient.name,
-            amount: ingredient.amount,
-            unit: ingredient.unit,
-          })),
+            id,
+            title,
+            description,
+            instructions,
+            portion_amount,
+            owner,
+            ownerUsername,
+            favouritedBy,
+            ingredients: ingredients.map((ingredient: any) => ({
+                id: ingredient.id,
+                name: ingredient.name,
+                amount: ingredient.amount,
+                unit: ingredient.unit,
+            })),
         });
-      }      
+    }
+         
 }
 

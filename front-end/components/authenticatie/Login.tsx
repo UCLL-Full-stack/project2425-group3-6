@@ -36,6 +36,7 @@ const Login: React.FC = () => {
       if (user) {
         sessionStorage.setItem('username', username);
         sessionStorage.setItem('token', user.token);
+        console.log(user.id)
         router.push('/my-recipes'); 
       } else {
         setErrorMessage('Invalid username or password.');

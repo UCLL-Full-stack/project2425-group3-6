@@ -1,3 +1,4 @@
+import { Recipe } from "../model/recipe";
 import { User } from "../model/user";
 import userDb from "../repository/user.db";
 import { AuthenticationResponse, UserInput } from "../types";
@@ -41,7 +42,19 @@ export const createUser = async (userInput: UserInput): Promise<User> => {
     // 4. Save the new user to the database
     return await userDb.createUser(newUser);
   };
-  
+
+  const addFavouriteRecipeToUser = async (userName: string, recipeId: number ) : Promise<void> => {
+    await userDb.addFavouriteRecipeToUser(userName, recipeId);
+  }
+
+  const getFavouriteRecipes = async (userName: string) : Promise<Recipe[]> => {
+    const recipes = await userDb.getFavouriteRecipes(userName);
+    if (!recipes) {
+        console.log(`No recipes found for user ${userName}.`);
+    }
+    
+    return recipes;
+  }
   
   
   export const authenticate = async (username: string, password: string): Promise<AuthenticationResponse> => {
@@ -73,4 +86,4 @@ export const createUser = async (userInput: UserInput): Promise<User> => {
 
 
 
-export default { getAllUsers, getUserById, getUserByUsername, authenticate, createUser};
+export default { getAllUsers, getUserById, getUserByUsername, authenticate, createUser, addFavouriteRecipeToUser, getFavouriteRecipes};

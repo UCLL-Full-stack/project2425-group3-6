@@ -183,4 +183,119 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
     }
 });
 
+/**
+ * @swagger
+ * /users/{userName}/favourites:
+ *   post:
+ *     summary: Add a recipe to the user's favourites
+ *     parameters:
+ *       - name: userName
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               recipeId:
+ *                 type: integer
+ *                 description: ID of the recipe to add
+ *     responses:
+ *       200:
+ *         description: Recipe successfully added to favourites.
+ *       404:
+ *         description: User or recipe not found.
+ *       400:
+ *         description: Recipe is already a favourite.
+ *       500:
+ *         description: Internal server error.
+ */
+userRouter.post(
+    '/:userName/favourites',
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { userName } = req.params;
+      const { recipeId } = req.body;
+  
+        if (!recipeId) {
+            return res.status(400).json({ message: 'recipeId is required in the request body.' });
+        }
+  
+        await userService.addFavouriteRecipeToUser(userName, recipeId);
+        res.status(200).json({ message: 'Recipe successfully added to favourites.' });
+    }
+);
+
+/**
+ * @swagger
+ * /users/{userName}/favourites:
+ *   get:
+ *     summary: Get all favourite recipes for a user
+ *     parameters:
+ *       - name: userName
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Username to retrieve favourite recipes
+ *     responses:
+ *       200:
+ *         description: List of favourite recipes.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   title:
+ *                     type: string
+ *                   description:
+ *                     type: string
+ *       404:
+ *         description: No favourite recipes found for the user.
+ *       500:
+ *         description: Internal server error.
+ */
+userRouter.get(
+    '/:userName/favourites',
+    async (req: Request, res: Response, next: NextFunction) => {
+      const { userName } = req.params;
+  
+      try {
+        // Haal favoriete recepten op via de service
+        const favouriteRecipes = await userService.getFavouriteRecipes(userName);
+  
+        // Controleer of er recepten zijn gevonden
+        if (favouriteRecipes.length === 0) {
+          return res
+            .status(404)
+            .json({ message: `No favourite recipes found for user ${userName}.` });
+        }
+  
+        // Retourneer de recepten
+        res.status(200).json(favouriteRecipes);
+      } catch (error) {
+        console.error(`Error fetching favourite recipes for user ${userName}:`, error);
+  
+        // Verzend een generieke foutmelding naar de client
+        res
+          .status(500)
+          .json({ message: "An error occurred while retrieving favourite recipes." });
+  
+        // Geef de fout door aan de error handler
+        next(error);
+      }
+    }
+  );
+  
+  
+  
+
 export { userRouter };

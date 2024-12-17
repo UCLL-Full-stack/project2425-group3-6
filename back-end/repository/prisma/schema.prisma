@@ -8,33 +8,45 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  username  String    @unique
-  firstName String
-  lastName  String
-  password  String
-  email     String    @unique
-  recipes   Recipe[] 
-  
+  id               Int           @id @default(autoincrement())
+  username         String        @unique
+  firstName        String
+  lastName         String
+  password         String
+  email            String        @unique
+  favouriteRecipes UserFavouriteRecipe[]  @relation("UserFavouriteRecipes") // No `fields` or `references`
+  recipes          Recipe[]      @relation("RecipeOwner")          // No `fields` or `references`
+
   @@map("User")
 }
 
 model Recipe {
-  id              Int           @id @default(autoincrement())
-  title           String
-  description     String
-  instructions    String
-  portion_amount  Int
-  owner           User         @relation(fields: [ownerUsername], references: [username])
-  ownerUsername   String
-  ingredients     IngredientRecipeType[] 
+  id               Int           @id @default(autoincrement())
+  title            String
+  description      String
+  instructions     String
+  portion_amount   Int
+  owner            User          @relation("RecipeOwner", fields: [ownerUsername], references: [username])
+  ownerUsername    String
+  ingredients      IngredientRecipeType[]
+  favouritedBy     UserFavouriteRecipe[]  @relation("UserFavouriteRecipes") // No `fields` or `references`
 
   @@map("Recipe")
 }
 
+model UserFavouriteRecipe  {
+  userName String
+  recipeId Int
+  user     User    @relation("UserFavouriteRecipes", fields: [userName], references: [username])
+  recipe   Recipe  @relation("UserFavouriteRecipes", fields: [recipeId], references: [id])
+
+  @@id([userName, recipeId])
+  @@map("UserFavouriteRecipes")
+}
+
 model Ingredient {
-  id             Int                  @id @default(autoincrement())
-  name           String               @unique
+  id             Int    @id @default(autoincrement())
+  name           String @unique
   calories       Int
   fats           Int
   carbohydrates  Int
@@ -45,20 +57,20 @@ model Ingredient {
 }
 
 model Measureunit {
-  id      Int       @id @default(autoincrement())
+  id      Int    @id @default(autoincrement())
   name    String
   size    Int
 
   @@map("Measureunit")
 }
 
-model IngredientRecipeType{
-  id         Int       @id @default(autoincrement())
+model IngredientRecipeType {
+  id         Int    @id @default(autoincrement())
   name       String
   amount     Int
   unit       String
   recipeId   Int
-  recipe     Recipe         @relation(fields: [recipeId], references: [id])
+  recipe     Recipe @relation(fields: [recipeId], references: [id])
 
   @@map("IngredientRecipe")
 }

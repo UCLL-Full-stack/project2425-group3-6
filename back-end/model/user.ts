@@ -10,6 +10,7 @@ export class User {
   private password!: string;
   private email: string;
   private recipes: Recipe[];
+  private favouriteRecipes: Recipe[];
 
   constructor(user: { id?: number; username: string; firstName: string; lastName: string; password: string; email: string }) {
     this.validate(user);
@@ -20,6 +21,21 @@ export class User {
     this.setPassword(user.password);
     this.email = user.email;
     this.recipes = [];
+    this.favouriteRecipes = [];
+  }
+
+  addFavouriteRecipe(recipe: Recipe): void {
+    if (!this.favouriteRecipes.includes(recipe)) {
+      this.favouriteRecipes.push(recipe);
+    }
+  }
+
+  removeFavouriteRecipe(recipe: Recipe): void {
+    this.favouriteRecipes = this.favouriteRecipes.filter(r => r.getId() !== recipe.getId());
+  }
+
+  getFavouriteRecipes(): Recipe[] {
+    return this.favouriteRecipes;
   }
 
   getId(): number | undefined {

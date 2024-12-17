@@ -6,6 +6,7 @@ type UserInput = {
     password: string;
     email:string;
     recipes?:RecipeInput[]
+    favouriteRecipes?:RecipeInput[]
 };
 
 type RecipeInput = {
@@ -16,6 +17,8 @@ type RecipeInput = {
     portion_amount : number;
     ownerUsername: string;
     ingredients: IngredientRecipe[];
+    favouritedBy?: UserInput[]
+
 };
 
 type IngredientInput = {

@@ -10,6 +10,7 @@ const Header: React.FC = () => {
         <ul className='flex'>
           <li className='bg-[#ff5781] hover:bg-[#97223f] hover:rounded-full p-2 mx-4 rounded-lg text-white text-xl'> <Link href="/discover">Discover</Link></li>
           <li className='bg-[#ff5781] hover:bg-[#97223f] hover:rounded-full p-2 mx-4 rounded-lg text-white text-xl'><Link href="/my-recipes">My Recipes</Link></li> 
+          <li className='bg-[#ff5781] hover:bg-[#97223f] hover:rounded-full p-2 mx-4 rounded-lg text-white text-xl'><Link href="/liked-recipes">Liked Recipes</Link></li> 
         </ul>
       </nav>
     </header>

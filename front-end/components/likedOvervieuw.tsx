@@ -8,7 +8,7 @@ import IngredientService from "@services/ingredientService";
 import Header from "./header";
 
 
-const OvervieuwDiscover: React.FC = () => {
+const OvervieuwLiked: React.FC = () => {
     const [recepis, setRecepis] = useState<Recipe[]>([]);
     const [ingredients, setIngredients] = useState<IngredientRecipe[]>([]);
     const [recepiId, setrecepiId] = useState(0);
@@ -26,28 +26,14 @@ const OvervieuwDiscover: React.FC = () => {
         ) ?? false
     );
 
-    const addLike = (recipeId : number) => {
-        const token =  sessionStorage.getItem("token");
-        const userId = sessionStorage.getItem("username");
-        console.log("jwt:", token)
-        console.log("id:", userId)
-        if(token && userId){
-            const fetchAddLike = async () => {
-                console.log("fetching")
-                await RecipeService.addLike(recipeId, userId, token);
-            };
-            fetchAddLike();
-        }
-    }
-
-
     useEffect(() => {
         const token =  sessionStorage.getItem("token");
-        if(token){
+        const user =  sessionStorage.getItem("username");
+        if(token && user){
             console.log("jwt:", token)
             const fetchDataProjects = async () => {
                 try {
-                    const data = await RecipeService.getAllRecipes(token);
+                    const data = await RecipeService.getLikesByUser(user, token);
                     setRecepis(data);
                     console.log(data)
                 } catch (error) {
@@ -56,7 +42,6 @@ const OvervieuwDiscover: React.FC = () => {
             };
             fetchDataProjects();
         }
-
     }, []);
 
     const handleModalClose = () => {
@@ -95,12 +80,6 @@ const OvervieuwDiscover: React.FC = () => {
                                 </div>
                                 <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
                             </div>
-                            <button className="mt-4 self-end bg-white"  onClick={() => { 
-                                    console.log("Button clicked, recipeId:", recipe.id); 
-                                    addLike(recipe.id); 
-                                }}>
-                                Like
-                            </button>
                             <button className="mt-4 self-end"   onClick={() => {handleModalOpen(); setrecepiId(recipe.id);}}>
                                 <img src="./share.svg" alt="Share" height={30} width={30} />
                             </button>
@@ -148,4 +127,4 @@ const OvervieuwDiscover: React.FC = () => {
     );
 };
 
-export default OvervieuwDiscover;
+export default OvervieuwLiked;
