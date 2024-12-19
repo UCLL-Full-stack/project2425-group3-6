@@ -330,6 +330,19 @@ recipeRouter.delete('/:id', async (req: Request, res: Response, next: NextFuncti
   }
 });
 
+recipeRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+  const { id } = req.params; 
+  try {
+      const recipe = await recipeService.getRecipeById(Number(id)); 
+      if (recipe) {
+          res.status(200).json(recipe); 
+      } else {
+          res.status(404).json({ status: 'error', errorMessage: 'Recipe not found.' }); 
+      }
+  } catch (error) {
+      res.status(400).json({ status: 'error', errorMessage: (error as Error).message }); 
+  }
+});
 
 
 export { recipeRouter };

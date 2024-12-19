@@ -130,6 +130,9 @@ const OvervieuwDiscover: React.FC = () => {
                                     <button  onClick={() => {handleModalOpen(); setrecepiId(recipe.id);}}>
                                         <img src="./share.svg" alt="Share" height={30} width={30} />
                                     </button>
+                                    <button className="bg-[#ff5781] text-white p-2 rounded mt-4" onClick={() => {router.push(`/recipe/${recipe.id}`);}}>
+                                        Details
+                                    </button>
                                 </div>
                             </div>
                             <p className="comic-neue-regular text-black text-xl mb-4">{recipe.description}</p>
@@ -143,7 +146,12 @@ const OvervieuwDiscover: React.FC = () => {
                     className="modal z-30 bg-[#fccfda] p-6 rounded-md shadow-lg min-w-[300px] modal"
                     overlayClassName="fixed inset-0 bg-black h-screen w-screen bg-opacity-70 z-20"
                 >
-                    <p className="text-2xl text-center">http://localhost:8080/recipe/{recepiId}</p> 
+                    <a 
+                        href={`http://localhost:8080/recipe/${recepiId}`} 
+                        className="text-2xl text-center text-blue-500 underline block"
+                    >
+                        http://localhost:8080/recipe/{recepiId}
+                    </a>                     
                     <div className="flex justify-evenly">
                    
                     <button  className="bg-[#ff5781] text-white p-2 rounded mt-4"  onClick={() => {handleModalClose();}}>
@@ -158,6 +166,7 @@ const OvervieuwDiscover: React.FC = () => {
                                 )
                                 .then(() => {
                                 alert("Link gekopieerd!");
+                                window.open(`http://localhost:8080/recipe/${recepiId}`, "_blank");
                                 })
                                 .catch((err) => {
                                 console.error(

@@ -61,6 +61,19 @@ const getAllRecipes = async (token : string) => {
     });
   };
 
+  const getRecipeById = async (id: number, token : string) => {
+    const response = await fetch(`http://localhost:3000/recipes/${id}`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+      }
+    });
+    if (!response.ok) {
+        throw new Error(`Failed to get recipe.`);
+    }
+    return await response.json();
+};
+
   const deleteRecipeById = async (id: number, token : string) => {
     const response = await fetch(`http://localhost:3000/recipes/${id}`, {
         method: "DELETE",
@@ -98,7 +111,8 @@ const deleteFavouriteRecipe = async (userName: string, recipeId: number, token :
     deleteRecipeById,
     addLike,
     getLikesByUser,
-    deleteFavouriteRecipe
+    deleteFavouriteRecipe,
+    getRecipeById
   };
   
   export default RecipeService;
