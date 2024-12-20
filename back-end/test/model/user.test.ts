@@ -10,7 +10,7 @@ const newEmail = "johndoe@outlook.com"
 
 const existingUser = new User({
     id: 1 ,
-    userName:"johndoe",
+    username:"johndoe",
     firstName:"John",
     lastName:"Doe",
     password:"Johndoe123",
@@ -25,7 +25,7 @@ test('given: valid values for user, when: user is created, then: user is created
     //given
 
     //when
-    const newUser = new User({userName:newUsername,firstName:newfirstName,lastName:newlastName,password:newpassword,email:newEmail})
+    const newUser = new User({username:newUsername,firstName:newfirstName,lastName:newlastName,password:newpassword,email:newEmail})
     //then
     expect(newUser.getUserName()).toEqual(newUsername)
     expect(newUser.getFirstName()).toEqual(newfirstName)
@@ -43,9 +43,11 @@ test('given: A valid recipe, when: recipe is added to user, then: a recipe is ad
         description: "A soup made with tomato",
         instructions: "Create the soup",
         portion_amount: 6,
-        ownerUsername: "johndoe"
-        ,ingredients:[]
-    })
+        owner: existingUser,  // Pass the existingUser as the owner
+        ownerUsername: "johndoe",
+        ingredients: [],  // Assuming ingredients are properly handled
+        favouritedBy: []  // Empty array as no users have favorited it yet
+    });
     //when
     existingUser.addRecipeToUser(existingRecipe)
     //then
@@ -61,9 +63,12 @@ test('given: A valid recipe, when: recipe is added to user and the same recipe i
         description: "A soup made with tomato",
         instructions: "Create the soup",
         portion_amount: 6,
-        ownerUsername: "johndoe"
-        ,ingredients:[]
-    })
+        owner: existingUser,  // Pass the existingUser as the owner
+        ownerUsername: "johndoe",
+        ingredients: [],
+        favouritedBy: []  // Empty array as no users have favorited it yet
+    });
+
     existingUser.addRecipeToUser(existingRecipe)
 
     //when

@@ -67,6 +67,9 @@ export class User {
   }
 
   addRecipeToUser(newRecipe: Recipe): void {
+    if (this.recipes.includes(newRecipe)) {
+      throw new Error('Recipe is already added to this user');
+    }
     this.recipes.push(newRecipe);
   }
 
