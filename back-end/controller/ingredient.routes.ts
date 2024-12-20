@@ -118,6 +118,52 @@ ingredientRouter.get('/search/:query', async (req: Request, res: Response, next:
     }
 });
 
+/**
+ * @swagger
+ * /ingredients/{id}:
+ *   get:
+ *     summary: Get an ingredient by ID
+ *     tags: [Ingredients]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the ingredient to retrieve.
+ *         schema:
+ *           type: number
+ *           format: int64
+ *     responses:
+ *       200:
+ *         description: The requested ingredient.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Ingredient'
+ *       404:
+ *         description: Ingredient not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 errorMessage:
+ *                   type: string
+ *       400:
+ *         description: Error occurred while fetching the ingredient.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 errorMessage:
+ *                   type: string
+ *     description: Returns the ingredient for the given ID.
+ */
+
 ingredientRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params; 
   try {

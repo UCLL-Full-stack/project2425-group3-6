@@ -330,6 +330,52 @@ recipeRouter.delete('/:id', async (req: Request, res: Response, next: NextFuncti
   }
 });
 
+/**
+ * @swagger
+ * /recipes/{id}:
+ *   get:
+ *     summary: Get a recipe by ID
+ *     tags: [Recipes]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the recipe to retrieve.
+ *         schema:
+ *           type: number
+ *           format: int64
+ *     responses:
+ *       200:
+ *         description: The requested recipe.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Recipe'
+ *       404:
+ *         description: Recipe not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 errorMessage:
+ *                   type: string
+ *       400:
+ *         description: Error occurred while fetching the recipe.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                 errorMessage:
+ *                   type: string
+ *     description: Returns the recipe for the given ID.
+ */
+
 recipeRouter.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   const { id } = req.params; 
   try {

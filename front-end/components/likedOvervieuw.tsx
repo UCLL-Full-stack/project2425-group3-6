@@ -98,7 +98,7 @@ const OvervieuwLiked: React.FC = () => {
                                     />
                                 </button>
                                 <button  onClick={() => {handleModalOpen(); setrecepiId(recipe.id);}}>
-                                    <img src="./share.svg" alt="Share" height={30} width={30} />
+                                    <img src="/share.svg" alt="Share" height={30} width={30} />
                                 </button>
                             </div>
                         </div>
