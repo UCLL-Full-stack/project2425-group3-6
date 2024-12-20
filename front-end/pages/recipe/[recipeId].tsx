@@ -1,6 +1,8 @@
 import Head from 'next/head';
 import Header from '@components/header';
 import RecipeDetails from '@components/recipedetails';
+import { useTranslation } from 'react-i18next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const getUserName = () => {
   if (typeof window !== 'undefined') {
@@ -13,6 +15,17 @@ const getUserName = () => {
 };
 
 const RecipeDetailsPage: React.FC = () => {
+  const { t } = useTranslation();
+  const username = getUserName();
+
+  if (!username) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <h1 className="text-3xl text-red-500">{t('accessDenied', 'Access Denied')}</h1>
+      </div>
+    );
+  }
+  
   return (
     <>
       <Head>
@@ -35,5 +48,14 @@ const RecipeDetailsPage: React.FC = () => {
     </>
   );
 };
+
+export const getServerSideProps = async (context: any) => {
+  const {locale} = context;
+  return {
+      props: {
+          ...(await serverSideTranslations(locale ?? "en", ["common"]))
+      }
+  }
+}
 
 export default RecipeDetailsPage;

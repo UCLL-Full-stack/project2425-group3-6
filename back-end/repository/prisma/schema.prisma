@@ -16,7 +16,6 @@ model User {
   email            String        @unique
   favouriteRecipes UserFavouriteRecipe[]  @relation("UserFavouriteRecipes") // No `fields` or `references`
   recipes          Recipe[]      @relation("RecipeOwner")          // No `fields` or `references`
-
   @@map("User")
 }
 

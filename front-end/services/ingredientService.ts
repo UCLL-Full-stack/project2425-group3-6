@@ -30,9 +30,23 @@ const getAllIngredients = async () => {
   };
   
   
+  const getIngredientById = async (id: number, token : string) => {
+    const response = await fetch(`http://localhost:3000/ingredients/${id}`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+      }
+    });
+    if (!response.ok) {
+        throw new Error(`Failed to get Ingredient.`);
+    }
+    return await response.json();
+};
+
   const IngredientService = {
     getAllIngredients,
     getIngredientByName,
+    getIngredientById,
   };
   
   export default IngredientService;

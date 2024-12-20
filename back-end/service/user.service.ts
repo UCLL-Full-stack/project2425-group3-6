@@ -37,6 +37,7 @@ export const createUser = async (userInput: UserInput): Promise<User> => {
         firstName: userInput.firstName,
         lastName: userInput.lastName,
         email: userInput.email,
+        role : userInput.role
     };
   
     return await userDb.createUser(newUser);

@@ -177,7 +177,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
                                                         Delete
                                                     </button>
                                                     <button className="">
-                                                        <img src="./share.svg" alt="Share" height={30} width={30} />
+                                                        <img src="/share.svg" alt="Share" height={30} width={30} />
                                                     </button>
                                                 </div>
                                             </div>
@@ -191,7 +191,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
                     className="fixed bottom-5 right-5 bg-[#fccfda] p-3 rounded-full shadow-lg flex justify-center items-center"
                     onClick={() => setIsModalOpen(true)}
                 >
-                    <img src="./plus.svg" alt="Add Recipe" height={50} width={50} />
+                    <img src="/plus.svg" alt="Add Recipe" height={50} width={50} />
                 </button>
 
                 <Modal 
@@ -314,7 +314,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
                                                         <p className="text-black">{ingredient.name}</p>
                                                         <button className="ml-4" 
                                                             onClick={() => removeIngredient(ingredient.ingredientId)}>
-                                                            <img src="./cross.svg" alt="Add Recipe" height={10} width={10} />
+                                                            <img src="/cross.svg" alt="Add Recipe" height={10} width={10} />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -364,6 +364,7 @@ const Overview: React.FC<RecipeOvervieuwProps> = ({ username }) => {
                             >
                                 Recept Toevoegen
                             </button>
+                            
                         </div>
                         
                     </form>

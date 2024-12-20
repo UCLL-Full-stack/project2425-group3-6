@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+import bcrypt from 'bcrypt';
 
 async function main() {
     const ingredients = [
@@ -76,12 +77,56 @@ async function main() {
         username: "chefmaster",
         firstName: "John",
         lastName: "Doe",
-        password: "securepassword",
+        password: await bcrypt.hash('securepassword', 12),
         email: "chefmaster@example.com",
       },
     });
     console.log("User seeded:", user);
 
+    const user1 = await prisma.user.create({
+      data: {
+        username: "frans",
+        firstName: "Frans",
+        lastName: "Smith",
+        password: await bcrypt.hash('frans123', 12) ,
+        email: "frans@example.com",
+      },
+    });
+    console.log("User seeded:", user1);
+    
+    const user2 = await prisma.user.create({
+      data: {
+        username: "jan",
+        firstName: "Jan",
+        lastName: "Johnson",
+        password: await bcrypt.hash('jan123', 12) ,
+        email: "jan@example.com",
+      },
+    });
+    console.log("User seeded:", user2);
+    
+    const user3 = await prisma.user.create({
+      data: {
+        username: "frits",
+        firstName: "Frits",
+        lastName: "Brown",
+        password: await bcrypt.hash('frits123', 12),
+        email: "frits@example.com",
+      },
+    });
+    console.log("User seeded:", user3);
+    
+    const user4 = await prisma.user.create({
+      data: {
+        username: "admin",
+        firstName: "Admin",
+        lastName: "User",
+        password: await bcrypt.hash('admin123', 12),
+        email: "admin@example.com",
+      },
+    });
+    console.log("User seeded:", user4);
+    
     console.log("Seeding recipes...");
     const recipes = [
        {

@@ -1,0 +1,21 @@
+{
+    "discover":{
+        "search_placeholder": "Search by ingredient...",
+        "like_button": "Like",
+        "liked_button": "Liked",
+        "share_button": "Share",
+        "details_button": "Details",
+        "close_button": "Close",
+        "copy_button": "Copy",
+        "link_copied": "Link copied!",
+        "modal_message": "Click the link below to view the recipe:"        
+    },
+    "header": {
+      "title": "Flavor Forge",
+      "discover": "Discover",
+      "myRecipes": "My Recipes",
+      "favorites": "Favorites",
+      "logout": "Logout"
+    }
+  }
+  

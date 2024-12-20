@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import userService from "@services/userService";
 import IngredientService from "@services/ingredientService";
 import Header from "./header";
+import { useTranslation } from "react-i18next";
 
 
 const OvervieuwDiscover: React.FC = () => {
@@ -17,6 +18,7 @@ const OvervieuwDiscover: React.FC = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const router = useRouter();
     const [searchTerm, setSearchTerm] = useState('');
+    const { t } = useTranslation(); 
 
     
     const filteredRecipes = searchTerm.trim() === '' 
@@ -26,6 +28,7 @@ const OvervieuwDiscover: React.FC = () => {
             ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
         ) ?? false
     );
+
 
     const addLike = (recipeId : number) => {
         const token =  sessionStorage.getItem("token");
@@ -102,7 +105,7 @@ const OvervieuwDiscover: React.FC = () => {
                 <div className=" mt-10 flex justify-center ">
                 <input
                         type="text"
-                        placeholder="Search by ingredient..."
+                        placeholder={t("discover.search_placeholder")}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="outline-none  bg-white rounded-xl px-4 py-2 w-1/2 text-xl" 
@@ -121,17 +124,17 @@ const OvervieuwDiscover: React.FC = () => {
                                         }}
                                     >
                                         <img 
-                                            src={recepisLiked.some((likedRecipe) => likedRecipe.id === recipe.id) ? "./hartjerood.svg" : "./hartje.svg"} 
+                                            src={recepisLiked.some((likedRecipe) => likedRecipe.id === recipe.id) ? "/hartjerood.svg" : "/hartje.svg"} 
                                             alt="Like" 
                                             height={30} 
                                             width={30} 
                                         />
                                     </button>
                                     <button  onClick={() => {handleModalOpen(); setrecepiId(recipe.id);}}>
-                                        <img src="./share.svg" alt="Share" height={30} width={30} />
+                                        <img src="/share.svg" alt="Share" height={30} width={30} />
                                     </button>
                                     <button className="bg-[#ff5781] text-white p-2 rounded mt-4" onClick={() => {router.push(`/recipe/${recipe.id}`);}}>
-                                        Details
+                                    {t("discover.details_button")}
                                     </button>
                                 </div>
                             </div>
@@ -155,7 +158,7 @@ const OvervieuwDiscover: React.FC = () => {
                     <div className="flex justify-evenly">
                    
                     <button  className="bg-[#ff5781] text-white p-2 rounded mt-4"  onClick={() => {handleModalClose();}}>
-                        Close
+                    {t("discover.close_button")}
                     </button>
                     <button
                         className="bg-[#ff5781] text-white p-2 rounded mt-4"
@@ -165,7 +168,7 @@ const OvervieuwDiscover: React.FC = () => {
                                 `http://localhost:8080/recipe/${recepiId}`
                                 )
                                 .then(() => {
-                                alert("Link gekopieerd!");
+                                alert(t("discover.link_copied"));
                                 window.open(`http://localhost:8080/recipe/${recepiId}`, "_blank");
                                 })
                                 .catch((err) => {
@@ -177,8 +180,8 @@ const OvervieuwDiscover: React.FC = () => {
                             }
                         }
                         >
-                        Kopieer
-                    </button>
+                        {t("discover.copy_button")}
+                         </button>
                     </div>
                 </Modal>
             </div>

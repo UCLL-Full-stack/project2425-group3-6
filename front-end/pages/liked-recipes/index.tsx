@@ -5,6 +5,8 @@ import Login from '@components/authenticatie/Login';
 import Overview from '@components/overvieuw';
 import OvervieuwDiscover from '@components/overvieuwDiscover';
 import OvervieuwLiked from '@components/likedOvervieuw';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 const getUserName = () => {
   if (typeof window !== 'undefined') {
@@ -17,6 +19,16 @@ const getUserName = () => {
 }
 
 const myRecepies: React.FC = () => {
+    const { t } = useTranslation();
+    const username = getUserName();
+
+  if (!username) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <h1 className="text-3xl text-red-500">{t('accessDenied', 'Access Denied')}</h1>
+      </div>
+    );
+  }
   return (
     <>
       <Head>
@@ -38,5 +50,14 @@ const myRecepies: React.FC = () => {
     </>
   );
 };
+
+export const getServerSideProps = async (context: any) => {
+  const {locale} = context;
+  return {
+      props: {
+          ...(await serverSideTranslations(locale ?? "en", ["common"]))
+      }
+  }
+}
 
 export default myRecepies;

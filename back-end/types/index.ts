@@ -1,3 +1,5 @@
+type Role = 'admin' | 'user' | 'guest';
+
 type UserInput = {
     id?: number;
     username: string;
@@ -5,8 +7,9 @@ type UserInput = {
     lastName: string;
     password: string;
     email:string;
-    recipes?:RecipeInput[]
-    favouriteRecipes?:RecipeInput[]
+    recipes?:RecipeInput[];
+    favouriteRecipes?:RecipeInput[];
+    role?: Role;
 };
 
 type RecipeInput = {
@@ -52,5 +55,6 @@ export {
     RecipeInput,
     IngredientInput,
     AuthenticationResponse,
-    IngredientRecipe
+    IngredientRecipe,
+    Role
 };

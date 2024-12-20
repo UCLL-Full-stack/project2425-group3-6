@@ -20,6 +20,7 @@
     "react-modal": "^3.16.1",
     "swr": "^2.2.0",
     "use-interval": "^1.4.0"
+    
   },
   "devDependencies": {
     "@types/node": "18.15.0",

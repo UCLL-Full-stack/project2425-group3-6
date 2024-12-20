@@ -3,6 +3,8 @@ import Image from 'next/image';
 import Header from '@components/header';
 import Login from '@components/authenticatie/Login';
 import Overview from '@components/overvieuw';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
 
 const getUserName = () => {
   if (typeof window !== 'undefined') {
@@ -15,6 +17,8 @@ const getUserName = () => {
 }
 
 const myRecepies: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <>
       <Head>
@@ -37,5 +41,14 @@ const myRecepies: React.FC = () => {
     </>
   );
 };
+
+export const getServerSideProps = async (context: any) => {
+  const {locale} = context;
+  return {
+      props: {
+          ...(await serverSideTranslations(locale ?? "en", ["common"]))
+      }
+  }
+}
 
 export default myRecepies;

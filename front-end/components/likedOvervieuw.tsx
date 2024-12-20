@@ -91,7 +91,7 @@ const OvervieuwLiked: React.FC = () => {
                                     onClick={() => {deleteLike(recipe.id);}}  
                                 >
                                     <img 
-                                        src= "./hartjerood.svg" 
+                                        src= "/hartjerood.svg" 
                                         alt="Like" 
                                         height={30} 
                                         width={30} 

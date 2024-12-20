@@ -1,3 +1,4 @@
+import Table from '@components/table';
 import userService from '@services/userService';
 import Head from 'next/head';
 import Link from 'next/link';
@@ -133,7 +134,9 @@ const Login: React.FC = () => {
                     I don't have an account
                     </button>
                 </form>
+                <Table></Table>
             </div>
+            
           
         ) : (
             <div  className="absolute bottom-10 right-80">
@@ -204,6 +207,7 @@ const Login: React.FC = () => {
                     I already have an account
                     </button>
                 </form>
+
             </div>
         )}
       </div>

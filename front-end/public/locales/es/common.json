@@ -1,0 +1,20 @@
+{
+    "discover":{
+        "search_placeholder": "Buscar por ingrediente...",
+        "like_button": "Me gusta",
+        "liked_button": "Ya me gusta",
+        "share_button": "Compartir",
+        "details_button": "Detalles",
+        "close_button": "Cerrar",
+        "copy_button": "Copiar",
+        "link_copied": "¡Enlace copiado!",
+        "modal_message": "Haz clic en el enlace a continuación para ver la receta:"
+    },
+    "header": {
+      "title": "FlavorForge",
+      "discover": "Descubrir",
+      "myRecipes": "Mis Recetas",
+      "favorites": "Favoritos"
+    }
+  }
+  

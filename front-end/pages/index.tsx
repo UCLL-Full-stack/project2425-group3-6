@@ -2,8 +2,13 @@ import Head from 'next/head';
 import Image from 'next/image';
 import Header from '@components/header';
 import Login from '@components/authenticatie/Login';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'react-i18next';
+import Table from '@components/table';
 
 const Home: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <>
       <Head>
@@ -35,11 +40,23 @@ const Home: React.FC = () => {
                 <text x="1050" y="250" className='text-9xl fill-white titletext2'> Flavor Forge </text>
               </svg>
               <Login></Login>
+              
           </div>
+
         </main>
       
     </>
   );
 };
+
+export const getServerSideProps = async (context: any) => {
+  const {locale} = context;
+  return {
+      props: {
+          ...(await serverSideTranslations(locale ?? "en", ["common"]))
+      }
+  }
+}
+
 
 export default Home;

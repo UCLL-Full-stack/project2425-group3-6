@@ -1,0 +1,20 @@
+{
+    "discover":{
+        "search_placeholder": "Zoek op ingrediënt...",
+        "like_button": "Vind ik leuk",
+        "liked_button": "Leuk gevonden",
+        "share_button": "Delen",
+        "details_button": "Details",
+        "close_button": "Sluiten",
+        "copy_button": "Kopiëren",
+        "link_copied": "Link gekopieerd!",
+        "modal_message": "Klik op de onderstaande link om het recept te bekijken:"
+    },
+    "header": {
+      "title": "FlavorForge",
+      "discover": "Ontdekken",
+      "myRecipes": "Mijn Recepten",
+      "favorites": "Favorieten"
+    }
+  }
+  

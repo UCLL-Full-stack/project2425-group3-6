@@ -9,6 +9,8 @@ import { recipeRouter } from './controller/recipe.routes';
 import { ingredientRouter } from './controller/ingredient.routes';
 import { measureunitRouter } from './controller/measureunit.routes';
 import { expressjwt } from 'express-jwt';
+import helmet from 'helmet';
+
 
 const app = express();
 dotenv.config();
@@ -21,6 +23,17 @@ app.use('/users', userRouter)
 app.use('/recipes', recipeRouter)
 app.use('/ingredients', ingredientRouter)
 app.use('/measureunits', measureunitRouter)
+
+app.use(helmet());
+
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            // Allow connections to own server and the external API
+            connectSrc: ["'self'", 'https://api.ucll.be'],
+        },
+    })
+);
 
 
 const swaggerOpts = {
